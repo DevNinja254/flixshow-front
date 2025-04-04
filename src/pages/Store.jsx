@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Layout from "../layout/Layout"
 import { useNavigate } from 'react-router-dom';
-import api from '../js/api';
+import api, { config } from '../js/api';
 import Loader from '../boilerplates/Loader';
 const Store = () => {
     const [isLoading, setIsLoading] = useState(true)
@@ -21,7 +21,7 @@ const Store = () => {
         url = `/search/?title=&cartegory=&popular=unknown&typs=${path}`
     }
     try {
-        api.get(url)
+        api.get(url, config)
       .then(res => {
         path.includes("store") ? setData(res.data.results) : setData(res.data)
         setIsLoading(false)

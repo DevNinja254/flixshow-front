@@ -22,7 +22,18 @@ const Account = () => {
     const setttingUpdating = (value) => {
         updating ? setUpdating(false) : setUpdating(true)
     }
-    
+    const authenticator = async (config) => {
+        try {
+            const res = await api.get("/info/", config)
+            const dataProfile = res.data
+            setUserData(dataProfile)
+            // console.log(dataProfile)
+            document.title = `${dataProfile.username} | Account`
+            setLoading(false)
+        } catch {
+            navigate('/account/authenticate')
+        }
+    }
     useEffect(() => {
         window.scrollTo(0,0)
         setUpdate(false)
@@ -37,20 +48,7 @@ const Account = () => {
                 "Authorization" : `Bearer ${token}`
                 }
             }
-                try {
-                    api.get("/info/", config)
-                    .then(res => {
-                    const dataProfile = res.data
-                    setUserData(dataProfile)
-                    // console.log(dataProfile)
-                    document.title = `${dataProfile.username} | Account`
-                    setLoading(false)
-                    }
-                    )
-                } catch {
-                    navigate('/account/authenticate')
-                }
-                    
+               authenticator(config)                    
             } else {
                 navigate('/account/authenticate')
             }
@@ -65,6 +63,8 @@ const Account = () => {
         localStorage.removeItem("paid")
         localStorage.removeItem("paidVideo")
         localStorage.removeItem("username")
+        localStorage.removeItem("admin")
+        localStorage.removeItem("proID")
         navigate('/account/authenticate')
     }
   return (

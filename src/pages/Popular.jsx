@@ -3,6 +3,7 @@ import Layout from "../layout/Layout"
 import { NavLink, useNavigate } from 'react-router-dom';
 import api from '../js/api';
 import Loader from '../boilerplates/Loader';
+import { config } from '../js/api';
 const Popular = () => {
     const [datas, setData] = useState([])
     const navigate = useNavigate()
@@ -20,7 +21,7 @@ const Popular = () => {
     }
  
     try {
-          api.get(url)
+          api.get(url, config)
           .then(res => {
             // console.log(res.data)
             setData(res.data)

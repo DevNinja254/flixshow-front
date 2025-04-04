@@ -26,7 +26,7 @@ const Deposit = () => {
       username: proid
     }
     try {
-      const res = await api.post('/deposit/', data)
+      const res = await api.post('/deposit/', config, data)
       // console.log(res.data)
       if(res.data.success) {
           setSubmitting(false)

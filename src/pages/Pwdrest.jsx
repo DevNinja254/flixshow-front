@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import Layout from '../layout/Layout'
 import { useNavigate } from 'react-router-dom'
 import { BarLoader as Spinner } from 'react-spinners'
-import api from "../js/api"
+import api, { config } from "../js/api"
 import { useParams } from 'react-router-dom'; // or your routing library
 
 function ResetPasswordForm() {
@@ -34,7 +34,7 @@ function ResetPasswordForm() {
           new_password: pwd1
         }
         try {
-          const res = await api.post('/password_reset/reset/', data)
+          const res = await api.post('/password_reset/reset/', data, config)
             // console.log(res.data)
               setSubmitting(false)
               setSubmitted(true)

@@ -12,6 +12,7 @@ import Authetication from './pages/Authetication'
 import Deposit from './pages/Deposit'
 import Play from './pages/Play'
 import Search from "./pages/Search"
+import Spin from "./pages/Spin"
 import Message from "./pages/Message"
 import ForgotPasswordForm from './pages/ForgotpwdForm'
 import ResetPasswordForm from './pages/Pwdrest'
@@ -37,6 +38,7 @@ const App = () => {
         <Route path='/message' element={<Message/>}/>
         <Route path='/account/password_reset' element={<ForgotPasswordForm/>}/>
         <Route path='/account/password_reset/:slug' element={<ResetPasswordForm/>}/>
+        <Route path='/spin_and_win' element={<Spin/>}/>
       </Routes>
     </BrowserRouter>
   )

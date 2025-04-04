@@ -118,6 +118,15 @@
     }
     
 }
+/* scrool text */
+@keyframes scrollText {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-200%);
+    }
+  }
 @media screen and (min-width: 800px) {
     /* sliding img */
   .slidder .img {

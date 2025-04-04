@@ -4,6 +4,7 @@ import { MdCategory as Cartegory } from "react-icons/md";
 import CatButton from '../ui/CatButton';
 import { useNavigate } from 'react-router-dom';
 import api from "../../js/api"
+import { config } from '../../js/api';
 import Loader from '../../boilerplates/Loader';
 const Cartegorised = ({paidTitles}) => {
     const [datas, setData] = useState([])
@@ -11,7 +12,7 @@ const Cartegorised = ({paidTitles}) => {
     const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
         try {
-          api.get('/cartegory')
+          api.get('/cartegory', config)
           .then(res => {
             // console.log(res.data.results)
             setData(res.data.results)

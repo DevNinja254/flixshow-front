@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Layout from "../layout/Layout"
 import { NavLink } from 'react-router-dom';
-import api from '../js/api';
+import api, { config } from '../js/api';
 import Loader from '../boilerplates/Loader';
 const Store = () => {
     const [datas, setData] = useState([])
@@ -12,7 +12,7 @@ const Store = () => {
       window.scrollTo(0,0)
       document.title = "Cartegories"
         try {
-          api.get('/cartegory')
+          api.get('/cartegory', config)
           .then(res => {
             // console.log(res.data.results)
             setData(res.data.results)

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import api from "../../js/api"
+import api, { config } from "../../js/api"
 const DepositHistory = ({userData}) => {
     const [datas, setData] = useState([])
     useEffect(() => {
       
-      api.get(`/deposit_history/?name=${userData.username}`)
+      api.get(`/deposit_history/?name=${userData.username}`, config)
       .then(res => {
         // console.log(res.data)
         setData(res.data.results)

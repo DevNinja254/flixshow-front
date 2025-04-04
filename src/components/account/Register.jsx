@@ -1,6 +1,6 @@
 
 import React, {useState} from 'react'
-import api from '../../js/api'
+import api, { config } from '../../js/api'
 const Register = ({settingRegister, isLoading, settingLoading}) => {
     const [errors, setError] = useState([])
     const [pwdMatch, setPwdMatch] = useState()
@@ -16,7 +16,7 @@ const Register = ({settingRegister, isLoading, settingLoading}) => {
         settingLoading(true)
         e.preventDefault();
         try {
-            const res = await api.post("/register/", formData)
+            const res = await api.post("/register/", formData, config)
             const data = res.data
             console.log(res.data)
             settingLoading(false)

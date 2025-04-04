@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../layout/Layout'
 import { useNavigate } from 'react-router-dom'
-import api from '../js/api'
+import api, { config } from '../js/api'
 const Cart = () => {
     const carr = [1,1,1,1]
     const [total, setTotal] = useState(0)
@@ -45,14 +45,14 @@ const Cart = () => {
                             video_name: carty.video_name,
                             image_url:carty.image_url,
                             price: carty.price
-                        })
+                        }, config)
                         .then(res => {
                             // console.log(res.data)
                             // remove(res.data.video_name)
                         })
                     }
                     localStorage.removeItem("cart")
-                    api.patch(`/profile/${userData.profile.buyerid}/`, {account: userData.profile.account - total})
+                    api.patch(`/profile/${userData.profile.buyerid}/`, {account: userData.profile.account - total}, config)
                     .then(res => {
                         // console.log(res.data)
                     })

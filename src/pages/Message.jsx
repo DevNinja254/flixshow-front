@@ -3,7 +3,7 @@ import Layout from '../layout/Layout'
 import { TypeAnimation } from 'react-type-animation'
 import { useNavigate } from 'react-router-dom'
 import { BarLoader as Spinner } from 'react-spinners'
-import api from "../js/api"
+import api, { config } from "../js/api"
 const Message = () => {
   const [submitting, setSubmitting] = useState(false)
   const [proid, setProid] = useState("")
@@ -19,7 +19,7 @@ const Message = () => {
     setSubmitting(true)
     e.preventDefault();
     try {
-      const res = await api.post('/message/', formData)
+      const res = await api.post('/message/', formData, config)
         setSubmitting(false)
         setSubmitted(true)
         // setFormData({

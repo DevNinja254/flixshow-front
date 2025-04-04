@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Layout from "../layout/Layout"
 import { NavLink, useNavigate } from 'react-router-dom';
-import api from '../js/api';
+import api, { config } from '../js/api';
 import Loader from '../boilerplates/Loader';
 const Search = () => {
     const [datas, setData] = useState([])
@@ -15,7 +15,7 @@ const Search = () => {
     document.title = `Search | ${path}`
     // console.log(path)
     try {
-          api.get(url)
+          api.get(url, config)
           .then(res => {
             // console.log(res.data)
             setData(res.data.results)

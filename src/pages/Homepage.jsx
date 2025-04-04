@@ -6,6 +6,7 @@ import Cartegorised from "../components/dashboard/Cartegorised";
 import Layout from "../layout/Layout"
 import api from "../js/api";
 import Loader from "../boilerplates/Loader"
+import { config as configurer } from "../js/api";
 const Homepage = () => {
   const [paidTitles, setPaidTitles] = useState([])
   const [paidVideo, setPaidVideos] = useState([])
@@ -29,7 +30,7 @@ const Homepage = () => {
         localStorage.setItem("proID", dataProfile.profile.buyerid)
         localStorage.setItem("Authenticated", true)
         // if authenticated get purchsed item
-        api.get(`/purchased/?username=${dataProfile.username}`)
+        api.get(`/purchased/?username=${dataProfile.username}`, configurer)
         .then(res => {
           const dataPurchased = res.data.results
           // console.log(dataPurchased)
@@ -39,7 +40,7 @@ const Homepage = () => {
           }
         })
         // watch movied
-        api.get(`/onwatch/?watcher=${dataProfile.username}`)
+        api.get(`/onwatch/?watcher=${dataProfile.username}`, configurer)
         .then(res => {
           const dataPurchased = res.data.results
           // console.log(dataPurchased)
@@ -49,7 +50,7 @@ const Homepage = () => {
           }
         })
         // downloaded movies
-        api.get(`/download/?name=${dataProfile.username}`)
+        api.get(`/download/?name=${dataProfile.username}`, configurer)
         .then(res => {
           const dataPurchased = res.data.results
           // console.log(dataPurchased)

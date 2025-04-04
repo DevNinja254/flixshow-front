@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import api from '../../js/api'
 import { useNavigate } from 'react-router-dom' 
 import Loader from '../../boilerplates/Loader'
+import { config } from '../../js/api'
 const Slider = ({paidTitles}) => {
   const navigate = useNavigate()
   const [curr, setCurr] = useState(0)
@@ -17,7 +18,7 @@ const Slider = ({paidTitles}) => {
   // console.log(paidTitles)
   useEffect(() => {
     try {
-      api.get('/videoDetails/?ordering=-date_uploaded&page_size=20')
+      api.get('/videoDetails/?ordering=-date_uploaded&page_size=20', config)
       .then(res => {
         setData(res.data.results)
         setIsLoading(false)

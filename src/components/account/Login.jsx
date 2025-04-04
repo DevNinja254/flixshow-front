@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {NavLink, useNavigate} from 'react-router-dom'
-import api from '../../js/api'
+import api, { config } from '../../js/api'
 
 const Login = ({settingLoading, isLoading}) => {
     const [errors, setError] = useState([])
@@ -13,11 +13,12 @@ const Login = ({settingLoading, isLoading}) => {
         settingLoading(true)
         e.preventDefault();
         try {
-            const res = await api.post("/login/", formData)
+            const res = await api.post("/login/", formData, config)
             const data = res.data
             // console.log(data)
             localStorage.setItem("Authenticated", true)
             localStorage.setItem("refresh_token", data.tokens.refresh)
+            localStorage.setItem("admin",data.is_superuser )
             localStorage.setItem("access_token", data.tokens.access)
             settingLoading(false)
             navigate("/")

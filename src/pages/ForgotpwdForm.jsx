@@ -22,7 +22,7 @@ const [erro, setError] = useState(false)
       email: formData.email,
     }
     try {
-      const res = await api.post('/password_reset/request/', data)
+      const res = await api.post('/password_reset/request/',config, data)
         // console.log(res.data)
           setSubmitting(false)
           setSubmitted(true)

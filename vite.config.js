@@ -8,6 +8,6 @@ export default defineConfig({
     vitePluginRequire.default(),
   ],
   server: {
-    origin:'https://smooth-vast-thrush.ngrok-free.app',
+    // origin:'https://smooth-vast-thrush.ngrok-free.app',
   }
 })

@@ -9,6 +9,7 @@ import { AiFillLike as Like } from "react-icons/ai";
 import { FaCommentDots as Comment } from "react-icons/fa";
 import api from "../js/api";
 import Loader from "../boilerplates/Loader";
+import { config as configurer } from "../js/api";
 const App = () => {
   const commentRef = useRef(null)
   const playVideo = useRef(null)
@@ -22,6 +23,7 @@ const App = () => {
    const [paidVideo, setPaidVideos] = useState([])
   const[changer, setChanger] = useState("")
   const [liked, setLiked] = useState(false)
+  const [switching, setSwitching] = useState(false)
   const [formData, setFormData] = useState({
     rate: 0,
     comment: ""
@@ -39,9 +41,12 @@ const App = () => {
   const [movies, setMovies] = useState(false)
   const [username, setUsername] = useState("")
   const [videos, setVideos] = useState(false)
+  const [videoUrl, setVideoUrl] = useState(null)
   // console.log(videoTitle)
   useEffect(() => {
+    setSwitching(true)
     window.scrollTo({top:0, left:0, behavior:"instant"})
+    // setIsLoading(true)
     document.title = videoTitle
     setChanger(path)
     const authenticated = localStorage.getItem("Authenticated")
@@ -62,16 +67,19 @@ const App = () => {
           
           setMovies(true)
           try {
-            api.get(`/videoDetails/${id}/`)
+            api.get(`/videoDetails/${id}/`,configurer )
           .then(res => {
               // console.log(res.data)
               setVideoDetails(res.data)
               try {
-                api.get(`/videos/?name=${videoTitle}`)
-              .then(res => {
-                  setVideo(res.data.results)
+                api.get(`/videos/?name=${videoTitle}`, configurer)
+              .then(res1 => {
+                  setVideo(res1.data.results)
                   setIsLoading(false)
-                 res.data.results.length > 0 ?  setVideos(true) :  setVideos(false)
+                  setSwitching(false)
+                  // console.log(res1.data)
+                 res1.data.results.length > 0 ?  setVideos(true) : setVideos(false)  
+                 setVideoUrl(res1.data.results[0].video)
               })
               }catch(error) {
                 console.warn(error)
@@ -102,14 +110,14 @@ const App = () => {
     }, 1000)
   }
   const handleLike = () => {
-    console.log("liked")
+    // console.log("liked")
     // e.preventDefault()
     const data = {
       user:username,
       total_like: 1,
       video_title: videoDetails.vidId
     }
-    api.post("/like/", data)
+    api.post("/like/", data, configurer)
     .then(res => {
       // console.log(res.data)
       setChanger(res.data.id + 1)
@@ -125,7 +133,7 @@ const App = () => {
       comment: formData.comment,
       video_title: videoDetails.vidId
     }
-    api.post("/review/", data)
+    api.post("/review/", data, configurer)
     .then(res => {
       // console.log(res.data)
       setChanger(res.data.id)
@@ -139,6 +147,36 @@ const App = () => {
       [e.target.name]: e.target.value,
     })
   }
+  const videoChange = (() => {
+    setIsLoading(true)
+    setTimeout(() => {
+      if (!switching) {
+        setIsLoading(false)
+      }
+    }, 1000)    
+  })
+  const downloader = (video) => {
+    // console.log(video)
+    if(window.confirm(`Download ${String(video.video).split("/")[5]}`)) {
+      const link = document.createElement('a');
+      link.href = video.video
+    
+      link.setAttribute("target", "_blank")
+      link.download = String(video.video).split("/")[5];
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+      if(playVideo.current) {
+        const videoUr = playVideo.current.src;
+        setVideoUrl(video.video)
+        playVideo.current.addEventListener('loadeddata', () => {
+          if (playVideo.current) {
+            playVideo.current.play()
+          }
+        }, {once: true})
+      
+  }}
   return (
     <Layout>
       <main className="bg-black p-2 play">
@@ -195,9 +233,7 @@ const App = () => {
           <div className="lg:grid grid-cols-5 gap-4 lg:m-3 xl:grid-cols-6 2xl:grid-cols-7">
             <div className="video-container col-span-5 ">
               {
-                videos ? <video id="myVideo" ref={playVideo} poster={require(videoDetails.image)}  controls controlsList="nodownload nopictureinpicture" autoPlay muted>
-                <source src={require(video[0].video)} type="video/mp4"/>
-                Your browser does not support the video tag.
+                videos ? <video id="myVideo" ref={playVideo} poster={require(videoDetails.image)} src={require(videoUrl)}  controls controlsList="nodownload nopictureinpicture" autoPlay muted>
             </video> : <p className="text-white">No Videos by that name</p>
               }
             <div className="flex items-start justify-between text-white">
@@ -238,13 +274,13 @@ const App = () => {
               <div className="md:grid grid-cols-3 gap-3 md:my-3 lg:block">
                 {
                   video.map((vid, index) => (
-                    <a href={require(vid.video)} className="bg-white block bg-opacity-10 rounded-md my-2 md:m-0 lg:my-2 p-3" download key={index}>
-                  <div className="flex items-center justify-between">
-                      <div>
-                          <div className="flex gap-3 textMidSm capitalize pb-1 font-bold">
-                          <p className="uppercase">{vid.title}</p>
-                          <p>{videoDetails.title}</p>
-                        </div>
+                    <div  onClick={() => {
+                      downloader(vid)
+                    }}  target="_blank" className="bg-white block bg-opacity-10 rounded-md my-2 md:m-0 lg:my-2 p-3"  download key={index}>
+                  <div className="flex flex-wrap items-center justify-between">
+                      <div className="grid w-full overflow-hidden">
+                         
+                          <p className="textMidSm max-w-full capitalize whitespace-normal pb-1 font-bold">{String(vid.video).split("/")[5]}</p>
                         <div className="flex uppercase gap-3 textMidSm text-gray-300">
                           <p>{vid.size}</p>
                           <p>{videolength}</p>
@@ -256,7 +292,7 @@ const App = () => {
                       </div>
                   </div>
                   <p className="flex uppercase gap-3 textSm text-gray-300 py-1 font-mono tracking-wide">Kingstonemovies.xyz</p>
-                </a>
+                </div>
                   ))
               }
               </div>
@@ -272,7 +308,7 @@ const App = () => {
               <div className="grid grid-cols-3 gap-5 md:grid-cols-4  lg:grid-cols-3  2xl:grid-cols-6">
                 {
                   paidVideo.map((pay, index) => (
-                    <NavLink to={`/store/play/${pay.video_name}?q=${pay.video_id}`} key={index}>
+                    <NavLink to={`/store/play/${pay.video_name}?q=${pay.video_id}`} key={index} onClick={videoChange}>
                       <img src={require(pay.image_url)} alt="" className="imgPlay rounded-md h-5/6" />
                       <p className="textMidSm font-bold">{pay.video_name}</p>
                     </NavLink>

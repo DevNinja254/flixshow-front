@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
 const PurchaseHistory = () => {
-    const hist = [1,11,11,1,11,1]
     const [datas, setData] = useState([])
     useEffect(() => {
       const data = localStorage.getItem("paidVideo")

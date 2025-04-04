@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { TypeAnimation } from 'react-type-animation'
 import { TiMessageTyping as Typer } from "react-icons/ti";
-import api from '../../js/api';
+import api, { config } from '../../js/api';
 import Loader from '../../boilerplates/Loader';
 const Message = () => {
   const [message, setMessages] = useState()
   const [isLoading, setIsLoading] = useState(true)
   const fetchin = async () => {
-    const res = await api.get("/message/")
+    const res = await api.get("/notification/?ordering=-date_notified", config)
     const data = res.data.results
+    // console.log(data)
     setMessages(data)
     setIsLoading(false)
  }

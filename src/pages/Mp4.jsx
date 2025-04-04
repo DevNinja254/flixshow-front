@@ -9,6 +9,7 @@ import { FaStar as Star } from "react-icons/fa";
 import api from '../js/api';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../boilerplates/Loader';
+import { config as configurer } from '../js/api';
 const Mp4 = () => {
    
     const star = [1,2,3,4,5,6,7,8,9,10]
@@ -62,7 +63,7 @@ const Mp4 = () => {
         }
                 
         try {
-            api.get(`/videoDetails/${id}/`)
+            api.get(`/videoDetails/${id}/`, configurer)
         .then(res => {
             // console.log(res.data)
             setData(res.data)
@@ -116,11 +117,11 @@ const Mp4 = () => {
                         video_id:datas.vidId,
                     }
                     try {
-                        api.patch(`/profile/${userData.profile.buyerid}/`, {account: (userData.profile.account - datas.price)})
+                        api.patch(`/profile/${userData.profile.buyerid}/`, {account: (userData.profile.account - datas.price)}, configurer)
                         .then(res => {
                             // console.log(res.data)
                             try {
-                                api.post("/purchased/", data)
+                                api.post("/purchased/", data, configurer)
                             .then(res => {
                                 // console.log(res.data)
                                 const paid = localStorage.getItem("paid").split(",")

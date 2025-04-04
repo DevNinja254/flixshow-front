@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom';
 import CatButton from '../ui/CatButton';
 import { useNavigate } from 'react-router-dom';
 import api from '../../js/api';
+import { config } from '../../js/api';
 import Loader from '../../boilerplates/Loader';
 const Popular = ({paidTitles}) => {
     const [datas, setData] = useState([])
@@ -11,7 +12,7 @@ const Popular = ({paidTitles}) => {
     const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
         try {
-          api.get('/videoDetails/?ordering=-date_uploaded&page_size=10&popular=true')
+          api.get('/videoDetails/?ordering=-date_uploaded&page_size=10&popular=true', config)
           .then(res => {
             setData(res.data.results)
             setIsLoading(false)

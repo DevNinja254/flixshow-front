@@ -3,6 +3,7 @@ import Layout from "../layout/Layout"
 import { NavLink, useNavigate } from 'react-router-dom';
 import api from '../js/api';
 import Loader from '../boilerplates/Loader';
+import { config as configurer } from '../js/api';
 const Purchased = () => {
     const data = [1,1,1,1,1,1]
     const [paidTitles, setPaidTitles] = useState([])
@@ -26,14 +27,14 @@ const Purchased = () => {
             // console.log(dataProfile.username)
             localStorage.setItem("Authenticated", true)
             // if authenticated get purchsed item
-            api.get(`/purchased/?username=${dataProfile.username}`)
+            api.get(`/purchased/?username=${dataProfile.username}`, configurer)
             .then(res => {
               const dataPurchased = res.data.results
             //   console.log("purchased", dataPurchased)
                 setPaidTitles(paidTitles => [...paidTitles, ...dataPurchased])
             })
             // watch movied
-            api.get(`/onwatch/?watcher=${dataProfile.username}`)
+            api.get(`/onwatch/?watcher=${dataProfile.username}`, configurer)
             .then(res => {
               const dataPurchased = res.data.results
             //   console.log("watched", dataPurchased)
@@ -41,7 +42,7 @@ const Purchased = () => {
               
             })
             // downloaded movies
-            api.get(`/download/?name=${dataProfile.username}`)
+            api.get(`/download/?name=${dataProfile.username}`, configurer)
             .then(res => {
               const dataPurchased = res.data.results
             //   console.log("downloaded", dataPurchased)
