@@ -59,7 +59,7 @@ const Header = () => {
             <span>Spin and win</span>
           </NavLink>
           {/* add more side links hera in sm */}
-          {admin ? <NavLink to="https://admin.flixshow.xyz" target='_blank'  className="py-2 flex place-content-center  items-center justify-start  gap-3 transition-all duration-150 ease-linear border-b-2 border-gray-500 border-opacity-15" onClick={setttingShowFalse}>
+          {admin ? <NavLink to="https://admin.flixshow.xyz/api/v1/admin" target='_blank'  className="py-2 flex place-content-center  items-center justify-start  gap-3 transition-all duration-150 ease-linear border-b-2 border-gray-500 border-opacity-15" onClick={setttingShowFalse}>
             <Admin size={23}/>
             <span>Admin Site</span>
           </NavLink> : null}
