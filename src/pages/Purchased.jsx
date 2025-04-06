@@ -8,7 +8,9 @@ const Purchased = () => {
     const data = [1,1,1,1,1,1]
     const [paidTitles, setPaidTitles] = useState([])
     const navigate = useNavigate()
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading1, setIsLoading1] = useState(true)
+    const [isLoading2, setIsLoading2] = useState(true)
+    const [isLoading3, setIsLoading3] = useState(true)
     useEffect(() => {
         window.scrollTo(0,0)
         document.title = "Purchased"
@@ -32,6 +34,7 @@ const Purchased = () => {
               const dataPurchased = res.data.results
             //   console.log("purchased", dataPurchased)
                 setPaidTitles(paidTitles => [...paidTitles, ...dataPurchased])
+                setIsLoading1(false)
             })
             // watch movied
             api.get(`/onwatch/?watcher=${dataProfile.username}`, configurer)
@@ -39,7 +42,7 @@ const Purchased = () => {
               const dataPurchased = res.data.results
             //   console.log("watched", dataPurchased)
                 setPaidTitles(paidTitles => [...paidTitles, ...dataPurchased])
-              
+              setIsLoading2(false)
             })
             // downloaded movies
             api.get(`/download/?name=${dataProfile.username}`, configurer)
@@ -47,6 +50,7 @@ const Purchased = () => {
               const dataPurchased = res.data.results
             //   console.log("downloaded", dataPurchased)
                 setPaidTitles(paidTitles => [...paidTitles, ...dataPurchased])
+                setIsLoading3
             })
           })
           } catch(error) {
@@ -55,7 +59,7 @@ const Purchased = () => {
         } else {
           navigate("/account/authenticate")
         }
-        setIsLoading(false)
+        // remove duplicates
       },[])
     //   remove duplicate
     function removeDuplicates(arr, key) {
@@ -74,7 +78,7 @@ const Purchased = () => {
     <Layout> 
       <main className=' bg-black store'>
             <div className="mx-3 py-2 md:w-11/12 md:mx-auto lg:w-10/12 xl:w-4/5">
-            {isLoading ? <div>
+            {isLoading1 & isLoading2 & isLoading3 ? <div>
             <div className=' mb-3'>
             <Loader h1='' h2='h-4'/>
             </div>
