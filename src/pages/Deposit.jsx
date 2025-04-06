@@ -4,6 +4,7 @@ import { TypeAnimation } from 'react-type-animation'
 import { useNavigate } from 'react-router-dom'
 import { BarLoader as Spinner } from 'react-spinners'
 import api from "../js/api"
+import { config } from '../js/api'
 const Deposit = () => {
   const [username, setUsername] = useState("")
   const [submitting, setSubmitting] = useState(false)
@@ -26,7 +27,7 @@ const Deposit = () => {
       username: proid
     }
     try {
-      const res = await api.post('/deposit/', config, data)
+      const res = await api.post('/deposit/', data, config)
       // console.log(res.data)
       if(res.data.success) {
           setSubmitting(false)

@@ -6,7 +6,7 @@ const DepositHistory = ({userData}) => {
       
       api.get(`/deposit_history/?name=${userData.username}`, config)
       .then(res => {
-        // console.log(res.data)
+        // console.log(res.data.results)
         setData(res.data.results)
       })
     }, [])
@@ -30,7 +30,7 @@ const DepositHistory = ({userData}) => {
             <p>{convertTimestampToDateTime(data.time)}</p>
           </div> :
            <div key={index} className='grid grid-cols-2 justify-between p-2 bg-gray-400 bg-opacity-40 text-sm font-mono'>
-           <p>Ksh, {data.amoun}</p>
+           <p>Ksh, {data.amount}</p>
            <p>{convertTimestampToDateTime(data.time)}</p>
          </div>
         ))}

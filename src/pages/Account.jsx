@@ -99,7 +99,7 @@ const Account = () => {
                 <figure>
                     <img className='profilePic block' src={require(userData.profile.profile_pic)} alt="" />
                 </figure>
-                <nav className=' flex gap-3 text-sm font-bold font-mon tracking-wide'>
+                <nav className=' flex gap-3 text-sm font-bold font-mono tracking-wide hover:cursor-pointer'>
                     <div onClick={logout}>Logout</div>
                     <NavLink to="/account/deposit">Deposit</NavLink>
                     <p onClick={() => {

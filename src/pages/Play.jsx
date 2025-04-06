@@ -156,9 +156,10 @@ const App = () => {
     }, 1000)    
   })
   const downloader = (video) => {
-    // console.log(video)
-    if(window.confirm(`Download ${String(video.video).split("/")[5]}`)) {
+    console.log(video)
+    if(!window.confirm(`Download ${String(video.video).split("/")[5]}`)) {
       const link = document.createElement('a');
+      console.log(video.video )
       link.href = video.video
     
       link.setAttribute("target", "_blank")

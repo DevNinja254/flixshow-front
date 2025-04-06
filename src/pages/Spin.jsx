@@ -30,7 +30,7 @@ const Spin = () => {
   const overRef = useRef(null)
   const [mustSpin, setMustSpin] = useState(false);
   const [prizeNumber, setPrizeNumber] = useState(0);
-	const [userDate, setUserData] = useState({})
+	const [userData, setUserData] = useState({})
 	const [userProfile, setUserProfile] = useState({})
 	const navigate = useNavigate()
 	const [error, setError] = useState("")
@@ -80,11 +80,11 @@ const Spin = () => {
         overRef.current.play()
     }
 		try {
-			const res2 = await api.post("/betting/",configurer, {
+			const res2 = await api.post("/betting/", {
 				win: Number(data[prizeNumber].option),
 				profile: userProfile.buyerid,
 				username: userProfile.username
-			})
+			}, configurer)
 		} catch(error) {
 			api.post("/errors/", {
 				user: userProfile.buyerid,
@@ -103,7 +103,7 @@ const Spin = () => {
 				error_details: `User won ${data[prizeNumber].option}, but never got added to account`
 			})
 			.then(res => {
-				console.log(res.data)
+				// console.log(res.data)
 			})
 		}
 		// console.log(res3.data)

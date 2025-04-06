@@ -25,7 +25,7 @@ const Homepage = () => {
         api.get("/info/", config)
       .then(res => {
         const dataProfile = res.data
-        // console.log(dataProfile.username)
+        // console.log(dataProfile)
         localStorage.setItem("username", dataProfile.username)
         localStorage.setItem("proID", dataProfile.profile.buyerid)
         localStorage.setItem("Authenticated", true)

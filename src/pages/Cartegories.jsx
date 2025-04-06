@@ -25,7 +25,7 @@ const Store = () => {
     }, [])
   return (
     <Layout>
-      <main className=' bg-black'>
+      <main className=' bg-black store'>
             <div className="mx-3 py-2 md:w-11/12 md:mx-auto lg:w-10/12 xl:w-4/5">
             {isLoading ? <div>
             <div className=' mb-3'>
