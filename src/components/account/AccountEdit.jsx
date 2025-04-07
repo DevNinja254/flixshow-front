@@ -54,7 +54,7 @@ const AccountEdit = ({userData, setttingUpdating}) => {
     }
   return (
     <form className={`text-white m-3 border-2 border-gray-300 border-opacity-20 rounded-md ${submitting ? "opacity-60 " :'opacity-100 '}`} onSubmit={handleSubmit}>
-      <div className='grid grid-cols-2 justify-between p-2 bg-slate-500 bg-opacity-40 text-sm font-mono'>
+      <div className={`${userData.username.length > 2 ? "hidden" : "grid"} grid-cols-2 justify-between p-2 bg-slate-500 bg-opacity-40 text-sm font-mono`}>
         <p>Username</p>
         <input type='text' name='username' value={formData.username} autoFocus className='outline-none bg-transparent' onChange={handleChange}/>
       </div>
