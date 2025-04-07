@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import Layout from '../layout/Layout'
 import { useNavigate } from 'react-router-dom'
 import { BarLoader as Spinner } from 'react-spinners'
+import { config } from '../js/api'
 import api from "../js/api"
 const ForgotPasswordForm = () => {
 const [erro, setError] = useState(false)
@@ -22,12 +23,13 @@ const [erro, setError] = useState(false)
       email: formData.email,
     }
     try {
-      const res = await api.post('/password_reset/request/',config, data)
+      const res = await api.post('/password_reset/request/', data, config)
         // console.log(res.data)
           setSubmitting(false)
           setSubmitted(true)
     } catch(error) {
         setSubmitting(false)
+        // console.log(error)
         setError(true)
     }
   }
