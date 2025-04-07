@@ -11,8 +11,9 @@ const HeaderLarge = () => {
         setSearchTerm(e.target.value)
       }
       const handleSubmit = (e) => {
+        // e.preventDefault()
         e.preventDefault()
-        console.log(searchTerm)
+        navigate(`/search?q=${searchTerm}`)
       }
     const settingSlide = () => {
         slide ? setSlide(false): setSlide(true)
