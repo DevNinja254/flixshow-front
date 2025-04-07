@@ -48,6 +48,7 @@ const Deposit = () => {
     })
   }
   useEffect(() => {
+    window.alert("For efficient processing, set Your username nefore depositing.")
     window.scrollTo(0,0)
     document.title = "Deposit"
     const authenticated = localStorage.getItem("Authenticated")
