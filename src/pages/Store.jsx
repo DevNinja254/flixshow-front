@@ -10,6 +10,7 @@ const Store = () => {
     const navigate = useNavigate()
     const path = window.location.pathname.substring(1)
    useEffect(() => {
+    setIsLoading(false)
     let url = ""
     window.scrollTo(0,0)
     document.title = path
