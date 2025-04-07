@@ -2,9 +2,10 @@ import React, {useState} from 'react'
 import { AiOutlineMenuUnfold as Menu} from "react-icons/ai"
 import { CiSearch as Search} from "react-icons/ci";
 import { MdAccountCircle as Account } from "react-icons/md";
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import SlidingNav from './SlidingNav';
 const HeaderLarge = () => {
+  const navigate = useNavigate()
     const [slide, setSlide] = useState(false)
     const [searchTerm, setSearchTerm] = useState("")
       const handleChange = (e) => {
