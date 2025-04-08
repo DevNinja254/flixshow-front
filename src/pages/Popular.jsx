@@ -129,7 +129,7 @@ const Popular = () => {
                 </div>
           </>}
             </div>
-            <div className='text-white sticky bottom-0 bg-black flex justify-between items-center px-3 py-2 border-y-2 border-gray-300 border-opacity-10 text-sm'>
+            <div className='text-white sticky bottom-0 bg-black flex justify-between items-center px-3 py-2 border-y-2 border-gray-300 border-opacity-10 text-sm button'>
             <button className='inline-block text-sm ' onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
               <span>Prev</span>
             </button>
@@ -143,7 +143,7 @@ const Popular = () => {
             <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
               <span>Next</span>
             </button>
-          </div>
+          </div>   
       </main>
     </Layout>
   )

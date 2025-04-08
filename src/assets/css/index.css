@@ -166,7 +166,7 @@
     cursor: not-allowed;
   }
   
-  .active {
+  .button .active {
     background-color: #007bff; /* Highlight for the active page */
     color: white;
   }
