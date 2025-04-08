@@ -48,7 +48,7 @@ const Store = () => {
     window.scrollTo(0,0)
     document.title = "Popular"
     fetchItems(currentPage)
-   }, [path[2]])
+   }, [path])
    // console.log(datas)
    const redirect = (title, id) => {
     // console.log(paidTitles)
