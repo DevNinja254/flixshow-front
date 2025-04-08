@@ -48,7 +48,7 @@ const Deposit = () => {
     })
   }
   useEffect(() => {
-    window.alert("For efficient processing, set Your username before depositing.")
+   
     window.scrollTo(0,0)
     document.title = "Deposit"
     const authenticated = localStorage.getItem("Authenticated")
@@ -57,6 +57,9 @@ const Deposit = () => {
     // console.log(proID)
     if(authenticated == "true") {
       setUsername(user)
+      if (!user) {
+        window.alert("For efficient processing, set Your username before depositing.")
+      }
       setProid(proID)
     } else {
       navigate("/account/authenticate/") 

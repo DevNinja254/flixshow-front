@@ -18,7 +18,7 @@ const Register = ({settingRegister, isLoading, settingLoading}) => {
         try {
             const res = await api.post("/register/", formData, config)
             const data = res.data
-            // console.log(res.data)
+            console.log(res.data)
             settingLoading(false)
             settingRegister(false, true) 
         } catch(error) {

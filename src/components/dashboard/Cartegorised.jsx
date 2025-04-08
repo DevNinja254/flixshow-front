@@ -14,7 +14,7 @@ const Cartegorised = ({paidTitles}) => {
         try {
           api.get('/cartegory', config)
           .then(res => {
-            // console.log(res.data.results)
+            // console.log(res.data)
             setData(res.data.results)
             setIsLoading(false)
           })
@@ -59,12 +59,12 @@ const Cartegorised = ({paidTitles}) => {
                 </div>
                 <div className='grid grid-cols-3 gap-5 md:grid-cols-4 lg:grid-cols-5  2xl:grid-cols-6'>
                     {cart.video_details.map((dat, index) => (
-                        index < 10 ? <div key={index} onClick={() => {
+                      <div key={index} onClick={() => {
                             redirect(dat.title, dat.vidId)
                         }}>
                             <img src={require(dat.image)} className='img rounded-md' alt="" />
                             <p className='text-white text-opacity-60 text-sm tracking-wider font-serif my-1'>{dat.title}</p>
-                        </div> :null
+                        </div>
                     ))}
                 </div>
                 <NavLink to={`/cartegory/${cart.cartName}`} className="md:flex justify-end">

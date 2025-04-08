@@ -4,34 +4,50 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import api from '../js/api';
 import Loader from '../boilerplates/Loader';
 import { config } from '../js/api';
+import { IoIosArrowBack as Back } from "react-icons/io";
+import { GrNext as Next } from "react-icons/gr";
 const Popular = () => {
+  
     const [datas, setData] = useState([])
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(true)
+    const[count, setCount] = useState(0)
+    const [currentPage, setCurrentPage] = useState(1)
     const path = window.location.pathname.split("/")
-    // console.log(path)
-   useEffect(() => {
-        window.scrollTo(0,0)
-        document.title = "Popular"
-    let url = ''
-    if (path.includes("popular")){
-        url = `/search/?popular=true`
-    }else {
-        url = `/search/?cartegory=${path[2]}`
-    }
- 
-    try {
-          api.get(url, config)
-          .then(res => {
-            // console.log(res.data)
-            setData(res.data)
-            setIsLoading(false)
-          })
-        } catch(error) {
-          console.log(error)
-          setIsLoading(false)
+    const [error, setError] = useState(null);
+    const [searchr, setSearchr] = useState('')
+    const pageSize = 20
+    const maxVisiblePages = 10
+    const fetchItems = async (page) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        let url = ''
+        if (path.includes("popular")){
+            url = `/search/?popular=true&page=${page}`
+            setSearchr('popular')
+        }else {
+            url = `/search/?cartegory=${path[2]}&page=${page}`
+            setSearchr(path[2])
         }
-      
+        const response = await api.get(url, config);
+        const data = await response.data;
+        // console.log(data)
+        setData(data.results);
+        setCount(data.count);
+        setCurrentPage(page);
+        
+      } catch (e) {
+        console.log(e.message);
+        setError(e.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+   useEffect(() => {
+    window.scrollTo(0,0)
+    document.title = "Popular"
+    fetchItems(currentPage)
    }, [path[2]])
    // console.log(datas)
    const redirect = (title, id) => {
@@ -43,6 +59,81 @@ const Popular = () => {
       navigate(`/store/${title}?q=${id}`)
     }
   }
+  const goToPage = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= Math.ceil(count / pageSize)) {
+      fetchItems(pageNumber);
+    }
+  };
+  const totalPages = Math.ceil(count / pageSize);
+  const getPaginationButtons = () => {
+    const buttons = [];
+    if (totalPages <= maxVisiblePages + 2) { // Show all if total is small
+      for (let i = 1; i <= totalPages; i++) {
+        buttons.push(
+          <button
+            key={i}
+            onClick={() => goToPage(i)}
+            className={i === currentPage ? 'active px-2 py-1 font-bold bg-gray-300 text-red-400 bg-opacity-30 rounded-sm' : 'px-2 py-1 bg-gray-500 bg-opacity-30 rounded-sm'}
+            disabled={i === currentPage}
+          >
+            {i}
+          </button>
+        );
+      }
+    } else {
+      // Show first page
+      buttons.push(
+        <button
+          key={1}
+          onClick={() => goToPage(1)}
+          className={1 === currentPage ? 'active ' : ''}
+          disabled={1 === currentPage}
+        >
+          1
+        </button>
+      );
+
+      // Show ellipsis if current page is far from the start
+      if (currentPage > Math.ceil(maxVisiblePages / 2) + 1) {
+        buttons.push(<span key="start-ellipsis">...</span>);
+      }
+
+      // Show a few pages around the current page
+      const start = Math.max(2, currentPage - Math.floor(maxVisiblePages / 2));
+      const end = Math.min(totalPages - 1, currentPage + Math.floor(maxVisiblePages / 2));
+      for (let i = start; i <= end; i++) {
+        buttons.push(
+          <button
+            key={i}
+            onClick={() => goToPage(i)}
+            className={i === currentPage ? 'active' : ''}
+            disabled={i === currentPage}
+          >
+            {i}
+          </button>
+        );
+      }
+
+      // Show ellipsis if current page is far from the end
+      if (currentPage < totalPages - Math.ceil(maxVisiblePages / 2)) {
+        buttons.push(<span key="end-ellipsis">...</span>);
+      }
+
+      // Show last page
+      buttons.push(
+        <button
+          key={totalPages}
+          onClick={() => goToPage(totalPages)}
+          className={totalPages === currentPage ? 'active' : ''}
+          disabled={totalPages === currentPage}
+        >
+          {totalPages}
+        </button>
+      );
+    }
+    return buttons;
+  };
+
   return (
     <Layout>
       <main className=' bg-black search'>
@@ -71,6 +162,21 @@ const Popular = () => {
                 </div>
           </>}
             </div>
+          <div className='text-white sticky bottom-0 bg-black flex justify-between items-center px-3 py-2 border-y-2 border-gray-300 border-opacity-10 text-sm'>
+            <button className='inline-block text-sm ' onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
+              <span>Prev</span>
+            </button>
+            <div className='flex items-center justify-center gap-2'>
+            {getPaginationButtons().map((button, index) => (
+              <span key={index} className=''>
+                {button}
+              </span>
+            ))}
+            </div>
+            <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
+              <span>Next</span>
+            </button>
+          </div>
       </main>
     </Layout>
   )

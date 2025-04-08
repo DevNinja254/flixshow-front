@@ -12,7 +12,7 @@ const Store = () => {
       window.scrollTo(0,0)
       document.title = "Cartegories"
         try {
-          api.get('/cartegory', config)
+          api.get('/cartegorytotal', config)
           .then(res => {
             // console.log(res.data.results)
             setData(res.data.results)
@@ -44,7 +44,7 @@ const Store = () => {
                         <NavLink key={index} className={`hover:shadow-md hover:shadow-sky-400`} to={`/cartegory/${data.cartName}`}>
                             <img src={require(data.cart_image)} className='img rounded-md h-5/6 object-cover block' alt="" />
                             <p className='text-red-500 font-bold text-sm tracking-wider font-serif mt-1 capitalize'>{data.cartName}</p>
-                           <p className='text-white text-opacity-50 text-sm tracking-wider font-serif'>{data.video_details.length} videos</p>
+                           <p className='text-white text-opacity-50 text-sm tracking-wider font-serif'>{data.total_related_count} videos</p>
                         </NavLink>
                     ))}
                 </div>
