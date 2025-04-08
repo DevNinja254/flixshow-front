@@ -1,35 +1,39 @@
 import React, { useEffect, useState } from 'react'
 import Layout from "../layout/Layout"
-import { useNavigate } from 'react-router-dom';
-import api, { config } from '../js/api';
+import { NavLink, useNavigate } from 'react-router-dom';
+import api from '../js/api';
 import Loader from '../boilerplates/Loader';
+import { config } from '../js/api';
+import { IoIosArrowBack as Back } from "react-icons/io";
+import { GrNext as Next } from "react-icons/gr";
 const Store = () => {
-    const [isLoading, setIsLoading] = useState(true)
+  
     const [datas, setData] = useState([])
-    const [pathUpdate, setPathUpdate] = useState("")
     const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(true)
     const[count, setCount] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
+    const path = window.location.pathname.split("/")
     const [error, setError] = useState(null);
+    const [searchr, setSearchr] = useState('')
     const pageSize = 20
-    const maxVisiblePages = 10
-    const path = window.location.pathname.substring(1)
+    const maxVisiblePages = 100
     const fetchItems = async (page) => {
       setIsLoading(true);
       setError(null);
       try {
         let url = ''
         if (path.includes("store")){
-          // console.log(path)
-            url = `/search/?page=${page}`
+            url = `/search/?popular=&page=${page}`
+            setSearchr('popular')
         }else {
-          console.log()
-            url = `/search/?title=&cartegory=&popular=unknown&typs=${path}`
+            url = `/search/?typs=${path}&page=${page}`
+            setSearchr(path)
         }
         const response = await api.get(url, config);
         const data = await response.data;
         // console.log(data)
-        setData(data.results)
+        setData(data.results);
         setCount(data.count);
         setCurrentPage(page);
         
@@ -41,11 +45,11 @@ const Store = () => {
       }
     };
    useEffect(() => {
-    setIsLoading(true)
     window.scrollTo(0,0)
-    document.title = path
+    document.title = "Popular"
     fetchItems(currentPage)
-   }, [path])
+   }, [path[2]])
+   // console.log(datas)
    const redirect = (title, id) => {
     // console.log(paidTitles)
     const paidTitles = JSON.stringify(localStorage.getItem("paid"))
@@ -55,7 +59,6 @@ const Store = () => {
       navigate(`/store/${title}?q=${id}`)
     }
   }
-  ///////////////////////////////////
   const goToPage = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= Math.ceil(count / pageSize)) {
       fetchItems(pageNumber);
@@ -64,78 +67,46 @@ const Store = () => {
   const totalPages = Math.ceil(count / pageSize);
   const getPaginationButtons = () => {
     const buttons = [];
-    if (totalPages <= maxVisiblePages + 2) { // Show all if total is small
-      for (let i = 1; i <= totalPages; i++) {
-        buttons.push(
-          <button
-            key={i}
-            onClick={() => goToPage(i)}
-            className={i === currentPage ? 'active px-2 py-1 font-bold bg-gray-300 text-red-400 bg-opacity-30 rounded-sm' : 'px-2 py-1 bg-gray-500 bg-opacity-30 rounded-sm'}
-            disabled={i === currentPage}
-          >
-            {i}
-          </button>
-        );
-      }
+
+    // Determine the range of pages to display directly
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, currentPage + Math.floor(maxVisiblePages / 2));
+
+    // Adjust start and end if near the edges to show a fixed number of pages
+    if (totalPages <= maxVisiblePages) {
+      startPage = 1;
+      endPage = totalPages;
     } else {
-      // Show first page
+      if (endPage - startPage < maxVisiblePages - 1) {
+        if (startPage === 1) {
+          endPage = Math.min(totalPages, maxVisiblePages);
+        } else if (endPage === totalPages) {
+          startPage = Math.max(1, totalPages - maxVisiblePages + 1);
+        }
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
       buttons.push(
         <button
-          key={1}
-          onClick={() => goToPage(1)}
-          className={1 === currentPage ? 'active' : ''}
-          disabled={1 === currentPage}
+          key={i}
+          onClick={() => goToPage(i)}
+          className={i === currentPage ? 'active px-2 py-1 bg-gray-500 text-red-600 font-bold bg-opacity-15' : 'px-2 py-1 bg-gray-500 text-white font-bold bg-opacity-15'}
+          disabled={i === currentPage}
         >
-          1
-        </button>
-      );
-
-      // Show ellipsis if current page is far from the start
-      if (currentPage > Math.ceil(maxVisiblePages / 2) + 1) {
-        buttons.push(<span key="start-ellipsis">...</span>);
-      }
-
-      // Show a few pages around the current page
-      const start = Math.max(2, currentPage - Math.floor(maxVisiblePages / 2));
-      const end = Math.min(totalPages - 1, currentPage + Math.floor(maxVisiblePages / 2));
-      for (let i = start; i <= end; i++) {
-        buttons.push(
-          <button
-            key={i}
-            onClick={() => goToPage(i)}
-            className={i === currentPage ? 'active' : ''}
-            disabled={i === currentPage}
-          >
-            {i}
-          </button>
-        );
-      }
-
-      // Show ellipsis if current page is far from the end
-      if (currentPage < totalPages - Math.ceil(maxVisiblePages / 2)) {
-        buttons.push(<span key="end-ellipsis">...</span>);
-      }
-
-      // Show last page
-      buttons.push(
-        <button
-          key={totalPages}
-          onClick={() => goToPage(totalPages)}
-          className={totalPages === currentPage ? 'active' : ''}
-          disabled={totalPages === currentPage}
-        >
-          {totalPages}
+          {i}
         </button>
       );
     }
+
     return buttons;
   };
-  ////////////////////////////
+
   return (
     <Layout>
-      <main className=' bg-black store'>
+      <main className=' bg-black search'>
             <div className="mx-3 py-2 md:w-11/12 md:mx-auto lg:w-10/12 xl:w-4/5">
-            {isLoading ? <div>
+          {isLoading ? <div>
             <div className=' mb-3'>
             <Loader h1='' h2='h-4'/>
             </div>
@@ -145,27 +116,27 @@ const Store = () => {
               ))}
             </div>
             <Loader h1='' h2='h-4'/>
-          </div> : <>
-          <p className='text-white text-sm font-mono text-center py-3 capitalize'>{datas.length} {path} Movies and Series Available.</p>
-            <div className='grid div2 grid-cols-3 gap-5 md:grid-cols-4 lg:grid-cols-5  2xl:grid-cols-6 my-2'>
-                    {datas.map((data, index) => (
-                        <div key={index} className="hover:shadow-md hover:shadow-sky-400 hover:cursor-pointer my-2" onClick={() => {
+          </div> :<>
+          <p className='text-white text-sm font-mono text-center py-3 capitalize'>{datas.length} {path[2]} Movies and Series Available.</p>
+            <div className='grid grid-cols-3 gap-5 md:grid-cols-4 lg:grid-cols-5  2xl:grid-cols-6 my-2'>
+                    {isLoading ? <p>Loading</p> : datas.map((data, index) => (
+                        <div key={index} className="hover:shadow-md hover:shadow-sky-400 hover:cursor-pointer my-2 " onClick={() => {
                             redirect(data.title, data.vidId)
                         }}>
-                            <img src={require(data.image)} className='img rounded-md h-5/6 object-cover' alt="" />
-                            <p className='text-white text-opacity-50 text-sm tracking-wider font-serif my-1 '>{data.title}</p>
+                            <img src={require(data.image)} className='img rounded-md h-full object-cover' alt="" />
+                            <p className='text-white text-opacity-50 text-sm tracking-wider font-serif my-1'>{data.title}</p>
                         </div>
                     ))}
                 </div>
           </>}
-          </div>
+            </div>
           <div className='text-white sticky bottom-0 bg-black flex justify-between items-center px-3 py-2 border-y-2 border-gray-300 border-opacity-10 text-sm'>
             <button className='inline-block text-sm ' onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
               <span>Prev</span>
             </button>
-            <div className='flex items-center justify-center gap-2'>
+            <div className='pagination-container'>
             {getPaginationButtons().map((button, index) => (
-              <span key={index} className=''>
+              <span key={index} className='inline-block'>
                 {button}
               </span>
             ))}
@@ -173,7 +144,7 @@ const Store = () => {
             <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
               <span>Next</span>
             </button>
-          </div> 
+          </div>
       </main>
     </Layout>
   )

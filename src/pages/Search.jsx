@@ -11,7 +11,7 @@ const Search = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [error, setError] = useState(null);
     const pageSize = 20
-    const maxVisiblePages = 10
+    const maxVisiblePages = 100
     const path = window.location.search.split("=")[1]
     const fetchItems = async (page) => {
       setIsLoading(true);
@@ -57,70 +57,38 @@ const Search = () => {
   const totalPages = Math.ceil(count / pageSize);
   const getPaginationButtons = () => {
     const buttons = [];
-    if (totalPages <= maxVisiblePages + 2) { // Show all if total is small
-      for (let i = 1; i <= totalPages; i++) {
-        buttons.push(
-          <button
-            key={i}
-            onClick={() => goToPage(i)}
-            className={i === currentPage ? 'active px-2 py-1 font-bold bg-gray-300 text-red-400 bg-opacity-30 rounded-sm' : 'px-2 py-1 bg-gray-500 bg-opacity-30 rounded-sm'}
-            disabled={i === currentPage}
-          >
-            {i}
-          </button>
-        );
-      }
+
+    // Determine the range of pages to display directly
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, currentPage + Math.floor(maxVisiblePages / 2));
+
+    // Adjust start and end if near the edges to show a fixed number of pages
+    if (totalPages <= maxVisiblePages) {
+      startPage = 1;
+      endPage = totalPages;
     } else {
-      // Show first page
+      if (endPage - startPage < maxVisiblePages - 1) {
+        if (startPage === 1) {
+          endPage = Math.min(totalPages, maxVisiblePages);
+        } else if (endPage === totalPages) {
+          startPage = Math.max(1, totalPages - maxVisiblePages + 1);
+        }
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
       buttons.push(
         <button
-          key={1}
-          onClick={() => goToPage(1)}
-          className={1 === currentPage ? 'active' : ''}
-          disabled={1 === currentPage}
+          key={i}
+          onClick={() => goToPage(i)}
+          className={i === currentPage ? 'active px-2 py-1 bg-gray-500 text-red-600 font-bold bg-opacity-15' : 'px-2 py-1 bg-gray-500 text-white font-bold bg-opacity-15'}
+          disabled={i === currentPage}
         >
-          1
-        </button>
-      );
-
-      // Show ellipsis if current page is far from the start
-      if (currentPage > Math.ceil(maxVisiblePages / 2) + 1) {
-        buttons.push(<span key="start-ellipsis">...</span>);
-      }
-
-      // Show a few pages around the current page
-      const start = Math.max(2, currentPage - Math.floor(maxVisiblePages / 2));
-      const end = Math.min(totalPages - 1, currentPage + Math.floor(maxVisiblePages / 2));
-      for (let i = start; i <= end; i++) {
-        buttons.push(
-          <button
-            key={i}
-            onClick={() => goToPage(i)}
-            className={i === currentPage ? 'active' : ''}
-            disabled={i === currentPage}
-          >
-            {i}
-          </button>
-        );
-      }
-
-      // Show ellipsis if current page is far from the end
-      if (currentPage < totalPages - Math.ceil(maxVisiblePages / 2)) {
-        buttons.push(<span key="end-ellipsis">...</span>);
-      }
-
-      // Show last page
-      buttons.push(
-        <button
-          key={totalPages}
-          onClick={() => goToPage(totalPages)}
-          className={totalPages === currentPage ? 'active' : ''}
-          disabled={totalPages === currentPage}
-        >
-          {totalPages}
+          {i}
         </button>
       );
     }
+
     return buttons;
   };
   ////////////////////////////
@@ -156,9 +124,9 @@ const Search = () => {
             <button className='inline-block text-sm ' onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
               <span>Prev</span>
             </button>
-            <div className='flex items-center justify-center gap-2'>
+            <div className='pagination-container'>
             {getPaginationButtons().map((button, index) => (
-              <span key={index} className=''>
+              <span key={index} className='inline-block'>
                 {button}
               </span>
             ))}
