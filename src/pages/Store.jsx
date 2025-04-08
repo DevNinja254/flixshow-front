@@ -27,8 +27,8 @@ const Store = () => {
             url = `/search/?popular=&page=${page}`
             setSearchr('popular')
         }else {
-            url = `/search/?typs=${path}&page=${page}`
-            setSearchr(path)
+            url = `/search/?typs=${path[1]}&page=${page}`
+            setSearchr(path[1])
         }
         const response = await api.get(url, config);
         const data = await response.data;
@@ -46,9 +46,10 @@ const Store = () => {
     };
    useEffect(() => {
     window.scrollTo(0,0)
-    document.title = "Popular"
+    setCurrentPage(1)
     fetchItems(currentPage)
-   }, [path])
+    // console.log(path)
+   }, [path[1]])
    // console.log(datas)
    const redirect = (title, id) => {
     // console.log(paidTitles)

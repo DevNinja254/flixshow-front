@@ -171,7 +171,7 @@
     color: white;
   }
   
-  .active:hover {
+  .button .active:hover {
     background-color: #0056b3;
   }
   
@@ -184,6 +184,20 @@
     }
     100% {
       transform: translateX(-200%);
+    }
+  }
+  .boiler {
+    display: flex;
+    overflow: hidden;
+    white-space: nowrap;
+    animation: opcaity 10s linear infinite;
+  }
+  @keyframes opcaity {
+    0% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 0.8;
     }
   }
 @media screen and (min-width: 800px) {
