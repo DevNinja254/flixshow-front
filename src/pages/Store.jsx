@@ -19,6 +19,7 @@ const Store = () => {
     const pageSize = 20
     const maxVisiblePages = 100
     const fetchItems = async (page) => {
+      window.scrollTo(0,0)
       setIsLoading(true);
       setError(null);
       try {
@@ -45,7 +46,7 @@ const Store = () => {
       }
     };
    useEffect(() => {
-    window.scrollTo(0,0)
+    
     setCurrentPage(1)
     fetchItems(currentPage)
     // console.log(path)

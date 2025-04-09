@@ -19,6 +19,7 @@ const Popular = () => {
     const pageSize = 20
     const maxVisiblePages = 100
     const fetchItems = async (page) => {
+      window.scrollTo(0,0)
       setIsLoading(true);
       setError(null);
       try {
@@ -45,7 +46,7 @@ const Popular = () => {
       }
     };
    useEffect(() => {
-    window.scrollTo(0,0)
+   
     document.title = "Popular"
     fetchItems(currentPage)
    }, [path[2]])
