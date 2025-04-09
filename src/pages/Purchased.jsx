@@ -11,55 +11,65 @@ const Purchased = () => {
     const [isLoading1, setIsLoading1] = useState(true)
     const [isLoading2, setIsLoading2] = useState(true)
     const [isLoading3, setIsLoading3] = useState(true)
+    const fetchItems = async () => {
+      window.scrollTo(0, 0);
+      const token = localStorage.getItem("access_token")
+      if (token) {
+        const config = {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        };
+    
+        try {
+          const profileResponse = await api.get("/info/", config);
+          const dataProfile = profileResponse.data;
+          localStorage.setItem("Authenticated", true);
+    
+          // if authenticated get purchased items
+          try {
+            const purchasedResponse = await api.get(`/purchased/?username=${dataProfile.username}`, configurer);
+            const dataPurchased = purchasedResponse.data.results;
+            setPaidTitles(paidTitles => [...paidTitles, ...dataPurchased]);
+            setIsLoading1(false);
+          } catch (error) {
+            console.error("Error fetching purchased items:", error);
+            setIsLoading1(false); // Ensure loading state is updated even on error
+          }
+    
+          // watch movies
+          try {
+            const watchedResponse = await api.get(`/onwatch/?watcher=${dataProfile.username}`, configurer);
+            const dataWatched = watchedResponse.data.results;
+            setPaidTitles(paidTitles => [...paidTitles, ...dataWatched]);
+            setIsLoading2(false);
+          } catch (error) {
+            console.error("Error fetching watched items:", error);
+            setIsLoading2(false); // Ensure loading state is updated even on error
+          }
+    
+          // downloaded movies
+          try {
+            const downloadedResponse = await api.get(`/download/?name=${dataProfile.username}`, configurer);
+            const dataDownloaded = downloadedResponse.data.results;
+            setPaidTitles(paidTitles => [...paidTitles, ...dataDownloaded]);
+            setIsLoading3(false); // Assuming you want to set this to false on success
+          } catch (error) {
+            console.error("Error fetching downloaded items:", error);
+            setIsLoading3(false); // Ensure loading state is updated even on error
+          }
+    
+        } catch (error) {
+          navigate("/account/authenticate");
+        }
+      } else {
+        navigate("/account/authenticate");
+      }
+    };
     useEffect(() => {
         window.scrollTo(0,0)
         document.title = "Purchased"
-        const token = localStorage.getItem("access_token")
-        // if authenticated
-        if(token) { 
-          const config = {
-            headers : {
-              "Authorization" : `Bearer ${token}`
-            }
-          }
-          try {
-            api.get("/info/", config)
-          .then(res => {
-            const dataProfile = res.data
-            // console.log(dataProfile.username)
-            localStorage.setItem("Authenticated", true)
-            // if authenticated get purchsed item
-            api.get(`/purchased/?username=${dataProfile.username}`, configurer)
-            .then(res => {
-              const dataPurchased = res.data.results
-            //   console.log("purchased", dataPurchased)
-                setPaidTitles(paidTitles => [...paidTitles, ...dataPurchased])
-                setIsLoading1(false)
-            })
-            // watch movied
-            api.get(`/onwatch/?watcher=${dataProfile.username}`, configurer)
-            .then(res => {
-              const dataPurchased = res.data.results
-            //   console.log("watched", dataPurchased)
-                setPaidTitles(paidTitles => [...paidTitles, ...dataPurchased])
-              setIsLoading2(false)
-            })
-            // downloaded movies
-            api.get(`/download/?name=${dataProfile.username}`, configurer)
-            .then(res => {
-              const dataPurchased = res.data.results
-            //   console.log("downloaded", dataPurchased)
-                setPaidTitles(paidTitles => [...paidTitles, ...dataPurchased])
-                setIsLoading3
-            })
-          })
-          } catch(error) {
-            navigate("/account/authenticate")
-          }
-        } else {
-          navigate("/account/authenticate")
-        }
-        // remove duplicates
+        fetchItems()
       },[])
     //   remove duplicate
     function removeDuplicates(arr, key) {

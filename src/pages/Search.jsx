@@ -14,6 +14,7 @@ const Search = () => {
     const maxVisiblePages = 100
     const path = window.location.search.split("=")[1]
     const fetchItems = async (page) => {
+      window.scrollTo(0,0)
       setIsLoading(true);
       setError(null);
       try {
