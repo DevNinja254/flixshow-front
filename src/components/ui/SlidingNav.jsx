@@ -26,7 +26,7 @@ const SlidingNav = ({settingSlide}) => {
             <Home size={20}/>
             <p>Home</p>
         </NavLink> 
-        {admin ? <NavLink to="https://admin.kingstonemovies.xyz/api/v1/admin" target='_blank' className="py-2 flex place-content-center  items-center justify-start  gap-3 transition-all duration-150 ease-linear border-b-2 border-gray-500 border-opacity-15 " onClick={settingSlide}>
+        {admin ? <NavLink to="https://kingstonemovies.org/api/v1/admin" target='_blank' className="py-2 flex place-content-center  items-center justify-start  gap-3 transition-all duration-150 ease-linear border-b-2 border-gray-500 border-opacity-15 " onClick={settingSlide}>
             <Admin size={20}/>
             <p>Admin Site</p>    
         </NavLink > : null}
