@@ -12,7 +12,7 @@ const Popular = ({paidTitles}) => {
     const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
         try {
-          api.get('/videoDetails/?ordering=-date_uploaded&page_size=10&popular=true', config)
+          api.get('/videoDetails/?ordering=-date_uploaded&page_size=13', config)
           .then(res => {
             setData(res.data.results)
             setIsLoading(false)
@@ -48,7 +48,7 @@ const Popular = ({paidTitles}) => {
       <>
          <div className='text-white flex  items-center gap-2 font-bold text-opacity-60 pb-2 '>
             <Popula size={24}/>
-            <h2 className='text-xl'>Popular</h2>
+            <h2 className='text-xl'>Recent</h2>
         </div>
         <div className='grid grid-cols-3 gap-5 md:grid-cols-4 lg:grid-cols-5  2xl:grid-cols-6'>
              {datas.map((data, index) => (
