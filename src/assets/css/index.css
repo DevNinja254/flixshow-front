@@ -186,18 +186,29 @@
       transform: translateX(-200%);
     }
   }
+  .boiler1 {
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.101), rgba(128, 128, 128, 0.5), rgba(255, 255, 255, 0.397));
+    animation: colorShift 5s linear infinite;
+  }
   .boiler {
     display: flex;
+    background: rgba(185, 185, 185, 0.61);
     overflow: hidden;
     white-space: nowrap;
     animation: opcaity 10s linear infinite;
   }
+  @keyframes colorShift {
+    0% { background-position: 0% 10%; opacity: 0.3; }
+    50% { background-position: 110% 50%; }
+    75% { background-position: 150% 50%; }
+    100% { background-position: 220% 50%; opacity: 0.5; }
+  }
   @keyframes opcaity {
     0% {
-      opacity: 0.5;
+      opacity: 0.3;
     }
     100% {
-      opacity: 0.8;
+      opacity: 0.5;
     }
   }
 @media screen and (min-width: 800px) {

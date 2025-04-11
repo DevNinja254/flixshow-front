@@ -19,7 +19,7 @@ const Search = () => {
       setError(null);
       console.log(path)
       try {
-        let url = `/search/?title=${String(path).toLowerCase()}&page=${page}`
+        let url = `/videoDetails/?title=${String(path).toLowerCase()}&page_size=20&ordering=-date_uploaded`
         const response = await api.get(url, config);
         const data = await response.data;
         // console.log(data)

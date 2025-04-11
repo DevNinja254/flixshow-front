@@ -25,10 +25,10 @@ const Store = () => {
       try {
         let url = ''
         if (path.includes("store")){
-            url = `/search/?popular=&page=${page}`
+            url = `/videoDetails/?page_size=1000&ordering=-date_uploaded`
             setSearchr('popular')
         }else {
-            url = `/search/?typs=${path[1]}&page=${page}`
+            url = `/videoDetails/?typs=${path[1]}&page_size=1000&ordering=-date_uploaded`
             setSearchr(path[1])
         }
         const response = await api.get(url, config);
@@ -119,7 +119,7 @@ const Store = () => {
             </div>
             <Loader h1='' h2='h-4'/>
           </div> :<>
-          <p className='text-white text-sm font-mono text-center py-3 capitalize'>{count} {path[2]} Movies and Series Available.</p>
+          <p className='text-white text-sm font-mono text-center py-3 capitalize'>{datas.length} {path[2]} Movies and Series Available.</p>
             <div className='grid grid-cols-3 gap-5 md:grid-cols-4 lg:grid-cols-5  2xl:grid-cols-6 my-2'>
                     {isLoading ? <p>Loading</p> : datas.map((data, index) => (
                         <div key={index} className="hover:shadow-md hover:shadow-sky-400 hover:cursor-pointer my-2 " onClick={() => {
@@ -132,7 +132,7 @@ const Store = () => {
                 </div>
           </>}
             </div>
-          <div className='text-white sticky bottom-0 bg-black flex justify-between items-center px-3 py-2 border-y-2 border-gray-300 border-opacity-10 text-sm button'>
+          {/*<div className='text-white sticky bottom-0 bg-black flex justify-between items-center px-3 py-2 border-y-2 border-gray-300 border-opacity-10 text-sm button'>
             <button className='inline-block text-sm ' onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
               <span>Prev</span>
             </button>
@@ -146,7 +146,7 @@ const Store = () => {
             <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
               <span>Next</span>
             </button>
-          </div>
+          </div>*/}
       </main>
     </Layout>
   )
