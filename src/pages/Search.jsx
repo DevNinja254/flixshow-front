@@ -109,7 +109,7 @@ const Search = () => {
             </div>
             <Loader h1='' h2='h-4'/>
           </div> :<>
-          <p className='text-white text-sm font-mono text-center py-3 capitalize'>{count} Movies and Series matches Your search, "{path}".</p>
+          <p className='text-white text-sm font-mono text-center py-3 capitalize'>{datas.length} Movies and Series matches Your search, "{path}".</p>
             <div className='grid grid-cols-3 gap-5 md:grid-cols-4 lg:grid-cols-5  2xl:grid-cols-6 my-2'>
                     {isLoading ? <p>Loading</p> : datas.map((data, index) => (
                         <div key={index} className="hover:shadow-md hover:shadow-sky-400 hover:cursor-pointer my-2 " onClick={() => {
