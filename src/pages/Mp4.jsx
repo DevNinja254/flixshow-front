@@ -61,19 +61,30 @@ const Mp4 = () => {
                     console.log(error)
                 }
         }
-                
-        try {
-            api.get(`/videoDetails/${id}/`, configurer)
-        .then(res => {
-            // console.log(res.data)
-            setData(res.data)
-            document.title = res.data.title
+        const videoDetail = sessionStorage.getItem("videodetail")
+        if (videoDetail) {
+            const data = JSON.parse(videoDetail)
+            setData(data)
+            document.title = data.title
             setIsLoading(false)
-            settingCart(res.data)
-        })
-        }catch {
+            settingCart(data)
             setIsLoading(false)
+            // sessionStorage.removeItem("videodetail")
+        } else {
+            try {
+                api.get(`/videoDetails/${id}/`, configurer)
+            .then(res => {
+                // console.log(res.data)
+                setData(res.data)
+                document.title = res.data.title
+                setIsLoading(false)
+                settingCart(res.data)
+            })
+            }catch {
+                setIsLoading(false)
+            }
         }
+        
     }, [])
     // console.log(cart)
     const addCart = () => {
@@ -117,20 +128,50 @@ const Mp4 = () => {
                         video_id:datas.vidId,
                     }
                     try {
-                        api.patch(`/profile/${userData.profile.buyerid}/`, {account: (userData.profile.account - datas.price)}, configurer)
+                        api.patch(`/profile/${userData.profile.buyerid}/`, {account: (userData.profile.account - (datas.price))}, configurer)
                         .then(res => {
                             // console.log(res.data)
                             try {
                                 api.post("/purchased/", data, configurer)
                             .then(res => {
                                 // console.log(res.data)
-                                const paid = localStorage.getItem("paid").split(",")
-                                localStorage.setItem("paid" , [...paid, String(res.data.video_name).toLowerCase()].join(","))
+                                const paid = localStorage.getItem("paid")
+                                if (paid) {
+                                    localStorage.setItem("paid", JSON.stringify([...JSON.parse(paid), datas.title]))
+                                } else {
+                                    localStorage.setItem("paid", JSON.stringify([datas.title]))
+                                }
                                 // console.log(paid)
+                                const paidVid = localStorage.getItem("paidVideo")
+                                if (paidVid) {
+                                    localStorage.setItem("paidVideo", JSON.stringify([...JSON.parse(paidVid), {
+                                        image_url: datas.image,
+                                        price: datas.price,
+                                        purchase_time: datas.date_uploaded,
+                                        video_name: datas.title,
+                                        video_id: datas.vidId,
+                                    }]))
+                                } else {
+                                    localStorage.setItem("paidVideo", JSON.stringify([{
+                                        image_url: datas.image,
+                                        price: datas.price,
+                                        purchase_time: datas.date_uploaded,
+                                        video_name: datas.title,
+                                        video_id: datas.vidId,
+                                    }]))
+                                }
+                                api.get(`/videos/?name=${datas.title.split(" ").join("%20")}`, configurer)
+                                .then(res => {
+                                const data1 = res.data.results
+                                sessionStorage.setItem("video", JSON.stringify(data1))
+                                // console.log(data1)
+                                })
                                 setPurchasing(false)
+                                sessionStorage.setItem("videodetail", JSON.stringify(datas))
                                 navigate(`/store/play/${res.data.video_name}?q=${res.data.video_id}`)
                             })
                             } catch(error) {
+                                console.log(error)
                                 setFailedPurchased(true)
                             }
                         })

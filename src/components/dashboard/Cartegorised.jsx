@@ -6,35 +6,91 @@ import { useNavigate } from 'react-router-dom';
 import api from "../../js/api"
 import { config } from '../../js/api';
 import Loader from '../../boilerplates/Loader';
+import { BarLoader as Spinner } from 'react-spinners'
+
 const Cartegorised = ({paidTitles}) => {
     const [datas, setData] = useState([])
+    const [spinner, setSpinner] = useState(false)
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState(false);
     useEffect(() => {
+      const cartegory = sessionStorage.getItem("cartegory")
+      if (cartegory) {
+        setData(JSON.parse(cartegory))
+        setIsLoading(false)
+      }else {
         try {
           api.get('/cartegory', config)
           .then(res => {
             // console.log(res.data)
             setData(res.data.results)
             setIsLoading(false)
+            sessionStorage.setItem("cartegory", JSON.stringify(res.data.results))
           })
         } catch(error) {
           console.log(error)
           setIsLoading(false)
         }
+      }
       }, [])
       
-      // console.log(datas)
-      const redirect = (title, id) => {
+      const redirect = async (title, id) => {
         // console.log(paidTitles)
-        if(paidTitles.includes(title.toLowerCase())) {
-          navigate(`store/play/${title}?q=${id}`)
+        const paidTitles = JSON.parse(localStorage.getItem("paid"))
+        // console.log("clicked")
+        if(paidTitles.includes(title)) {
+          // setSpinner(true)
+          // setRedirector(true)
+          
+          try {
+            const response = await api.get(`/videoDetails/${id}/`,config )
+            const data = await response.data
+            api.get(`/videos/?name=${title.split(" ").join("%20")}`, config)
+            .then(res => {
+              const data1 = res.data.results
+              sessionStorage.setItem("video", JSON.stringify(data1))
+              sessionStorage.setItem("videodetail", JSON.stringify(data))
+              navigate(`/store/play/${title}?q=${id}`)
+            })
+            
+          } catch (e) {
+            setError(true)
+            console.log(e.message)
+          } finally {
+            setSpinner(false)
+          }
         } else {
-          navigate(`store/${title}?q=${id}`)
+          setSpinner(true)
+          try {
+            const response = await api.get(`/videoDetails/${id}/`,config )
+            const data = await response.data
+            sessionStorage.setItem("videodetail", JSON.stringify(data))
+            navigate(`/store/${title}?q=${id}`)
+          } catch (e) {
+            setError(true)
+          } finally {
+            setSpinner(false)
+          }
+          
         }
       }
   return (
     <div className='mx-4 popula py-3'>
+      <div className='fixed top-0 left-0 w-full z-30'>
+              <Spinner
+                color="rgba(255,255,255,0.5)"
+                // backgroundColor="black"
+                loading={spinner}
+                cssOverride={{
+                  "width": "100%",
+                  "backgroundColor": "transparent"
+                }}
+                size={150}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
+            </div>
        <div>
        {isLoading ? <div>
         {[1,1,1,1].map((_, index) => (

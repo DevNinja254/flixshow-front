@@ -10,7 +10,10 @@ import { FaCommentDots as Comment } from "react-icons/fa";
 import api from "../js/api";
 import Loader from "../boilerplates/Loader";
 import { config as configurer } from "../js/api";
+import { BarLoader as Spinner } from "react-spinners";
+
 const App = () => {
+  const [spinner, setSpinner] = useState(false)
   const commentRef = useRef(null)
   const playVideo = useRef(null)
   const [videoDetails, setVideoDetails] = useState({})
@@ -42,6 +45,7 @@ const App = () => {
   const [username, setUsername] = useState("")
   const [videos, setVideos] = useState(false)
   const [videoUrl, setVideoUrl] = useState(null)
+  const [error, setError] = useState(false)
   // console.log(videoTitle)
   useEffect(() => {
     setSwitching(true)
@@ -54,41 +58,60 @@ const App = () => {
       rate: 0,
       comment: ""
     })
+    console.log("tkae")
     if (authenticated) {
       // const likedVideos = localStorage.getItem('likes')
       const titles = localStorage.getItem("paid").split(",")
       // console.log(titles)
       const user = localStorage.getItem('username')
       setUsername(user)
+      
       if (titles) {
+        
         setPaidVideos(JSON.parse(localStorage.getItem("paidVideo")))
         const tester = title.includes("%20") ? title.split("%20").join(" ") : title
-        if(titles.includes(tester.toLowerCase())){
-          
+        if(true){
           setMovies(true)
-          try {
-            api.get(`/videoDetails/${id}/`,configurer )
-          .then(res => {
-              // console.log(res.data)
-              setVideoDetails(res.data)
-              try {
-                api.get(`/videos/?name=${videoTitle}`, configurer)
-              .then(res1 => {
-                  setVideo(res1.data.results)
-                  setIsLoading(false)
-                  setSwitching(false)
-                  // console.log(res1.data)
-                 res1.data.results.length > 0 ?  setVideos(true) : setVideos(false)  
-                 setVideoUrl(res1.data.results[0].video)
-              })
-              }catch(error) {
-                console.warn(error)
-                  
-              }
-              // setIsLoading(false)
-          })
-          }catch(error) {
-            console.warn(error)
+          const videoDetail = sessionStorage.getItem("videodetail")
+          const vide = sessionStorage.getItem("video")
+          if (videoDetail) {
+            // console.log(JSON.parse(videoDetail))
+            setVideo(JSON.parse(vide))
+            setVideoDetails(JSON.parse(videoDetail))
+            setIsLoading(false)
+            setSwitching(false)
+            JSON.parse(vide)[0] ?  setVideos(true) : setVideos(false)  
+            setVideoUrl(JSON.parse(vide)[0].video)
+            // sessionStorage.removeItem("videodetail")
+            // sessionStorage.removeItem("video")
+          } else {
+            try {
+              api.get(`/videoDetails/${id}/`,configurer )
+            .then(res => {
+                // console.log(res.data)
+                setVideoDetails(res.data)
+                sessionStorage.setItem("videodetail", JSON.stringify(res.data))
+                try {
+                  console.log(videoTitle)
+                  api.get(`/videos/?name=${videoTitle}`, configurer)
+                .then(res1 => {
+                    setVideo(res1.data.results)
+                    setIsLoading(false)
+                    setSwitching(false)
+                    // console.log(res1.data)
+                   res1.data.results.length > 0 ?  setVideos(true) : setVideos(false)  
+                   setVideoUrl(res1.data.results[0].video)
+                   sessionStorage.setItem("video", JSON.stringify(res1.data.results)) 
+                })
+                }catch(error) {
+                  console.warn(error)
+                    
+                }
+                // setIsLoading(false)
+            })
+            }catch(error) {
+              console.warn(error)
+            }
           }
         }
         } else {
@@ -147,19 +170,11 @@ const App = () => {
       [e.target.name]: e.target.value,
     })
   }
-  const videoChange = (() => {
-    setIsLoading(true)
-    setTimeout(() => {
-      if (!switching) {
-        setIsLoading(false)
-      }
-    }, 1000)    
-  })
   const downloader = (video) => {
     // console.log(video)
     if(window.confirm(`Download ${String(video.video).split("/")[5]}`)) {
       const link = document.createElement('a');
-      console.log(video.video )
+      // console.log(video.video )
       link.href = video.video
     
       link.setAttribute("target", "_blank")
@@ -178,8 +193,48 @@ const App = () => {
         }, {once: true})
       
   }}
+  const changevid = async(title, id) => {
+    window.scrollTo(0,0)
+    setSpinner(true)
+    api.get(`/videoDetails/${id}/`,configurer )
+            .then(res => {
+                // console.log(res.data)
+                setVideoDetails(res.data)
+                try {
+                  console.log(videoTitle)
+                  api.get(`/videos/?name=${title}`, configurer)
+                .then(res1 => {
+                    setVideo(res1.data.results)
+                    setIsLoading(false)
+                    setSwitching(false)
+                    // console.log(res1.data)
+                   res1.data.results.length > 0 ?  setVideos(true) : setVideos(false)  
+                   setVideoUrl(res1.data.results[0].video)
+                   setSpinner(false)
+                })
+                }catch(error) {
+                  console.warn(error)
+                    
+                }
+                // setIsLoading(false)
+            })
+  }
   return (
     <Layout>
+       <div className='fixed top-0 left-0 w-full z-30'>
+        <Spinner
+          color="rgba(255,255,255,0.5)"
+          // backgroundColor="black"
+          loading={spinner}
+          cssOverride={{
+            "width": "100%",
+            "backgroundColor": "transparent"
+          }}
+          size={150}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
+      </div>
       <main className="bg-black p-2 play">
         {movies ? <>
           {isLoading & !videoLoaded ? <div>
@@ -309,10 +364,12 @@ const App = () => {
               <div className="grid grid-cols-3 gap-5 md:grid-cols-4  lg:grid-cols-3  2xl:grid-cols-6">
                 {
                   paidVideo.map((pay, index) => (
-                    <NavLink to={`/store/play/${pay.video_name}?q=${pay.video_id}`} key={index} onClick={videoChange}>
+                    <div to={`/store/play/${pay.video_name}?q=${pay.video_id}`} key={index} onClick={() => {
+                      changevid(pay.video_name, pay.video_id)
+                    }}>
                       <img src={require(pay.image_url)} alt="" className="imgPlay rounded-md h-5/6" />
                       <p className="textMidSm font-bold">{pay.video_name}</p>
-                    </NavLink>
+                    </div>
                   ))
                 }
               </div>

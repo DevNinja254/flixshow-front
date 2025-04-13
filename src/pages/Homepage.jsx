@@ -12,9 +12,7 @@ const Homepage = () => {
   const [paidVideo, setPaidVideos] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   document.title = "KingStonemovies"
-  useEffect(() => {
-    const token = localStorage.getItem("access_token")
-    // if authenticated
+  const fetchItems = async (token) => {
     if(token) {
       const config = {
         headers : {
@@ -30,7 +28,16 @@ const Homepage = () => {
         localStorage.setItem("proID", dataProfile.profile.buyerid)
         localStorage.setItem("Authenticated", true)
         // if authenticated get purchsed item
-        api.get(`/purchased/?username=${dataProfile.username}`, configurer)
+        const paidVid = localStorage.getItem("paidVideo")
+        if (paidVid) {
+          setPaidVideos(JSON.parse(paidVid))
+          const dat = []
+          for (const data of JSON.parse(paidVid)) {
+            dat.push(data.video_name)
+          }
+          localStorage.setItem("paid", JSON.stringify(dat))
+        } else {
+          api.get(`/purchased/?username=${dataProfile.username}`, configurer)
         .then(res => {
           const dataPurchased = res.data.results
           // console.log(dataPurchased)
@@ -59,6 +66,10 @@ const Homepage = () => {
             setPaidTitles(paidTitles => [...paidTitles, dataPur.video_name])
           }
         })
+        ////////paid here/////////////////
+        console.log(paidTitles)
+        ///////////title//////////
+        }
       })
       } catch(error) {
         localStorage.setItem("Authenticated", false)
@@ -68,9 +79,12 @@ const Homepage = () => {
       localStorage.setItem("Authenticated", false)
     }
     setIsLoading(false)
+  }
+  useEffect(() => {
+    const token = localStorage.getItem("access_token")
+    // if authenticated
+    fetchItems(token)
   },[])
-  // console.log(paidTitles)
-  localStorage.setItem("paid", paidTitles)
   function removeDuplicates(arr, key) {
     const seen = new Set();
     return arr.filter(obj => {
@@ -83,8 +97,16 @@ const Homepage = () => {
     });
   }
   
+ const paed = localStorage.getItem("paidVideo")
+ if(!paed) {
   const uniqueArray = removeDuplicates(paidVideo, 'video_name');
   localStorage.setItem("paidVideo", JSON.stringify(uniqueArray))
+  const pay = []
+  for (const data of uniqueArray) {
+    pay.push(data.video_name)
+  }
+  localStorage.setItem("paid", JSON.stringify(pay))
+ }
   return (
     <Layout>
         <main className="bg-black bg-opacity-100">

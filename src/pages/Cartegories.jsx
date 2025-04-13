@@ -8,20 +8,32 @@ const Store = () => {
     // const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(true)
     const path = window.location.pathname.substring(1)
+    const [error, setError] = useState(false);
+    const fetchItems = async () => {
+          window.scrollTo(0,0)
+          setIsLoading(true);
+          setError(false);
+          
+          const cartegory = sessionStorage.getItem("cartegory")
+          if (cartegory) {
+            setData(JSON.parse(cartegory))
+            setIsLoading(false)
+          } else {
+            try {
+              const response = await api.get('/cartegory', config)
+              const data = await response.data.results;
+              setData(data)
+            } catch(error) {
+              setError(true);
+            } finally {
+              setIsLoading(false);
+            }
+          }
+    }
     useEffect(() => {
       window.scrollTo(0,0)
       document.title = "Cartegories"
-        try {
-          api.get('/cartegorytotal', config)
-          .then(res => {
-            // console.log(res.data.results)
-            setData(res.data.results)
-            setIsLoading(false)
-          })
-        } catch(error) {
-          // console.log(error)
-          setIsLoading(false)
-        }
+      fetchItems()
     }, [])
   return (
     <Layout>

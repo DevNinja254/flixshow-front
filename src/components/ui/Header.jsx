@@ -5,6 +5,7 @@ import { RiMenuFold3Line as Menu2 } from "react-icons/ri";
 import { IoLogoGameControllerB  as Game} from "react-icons/io";
 import { RxCross1 as Cross } from "react-icons/rx";
 import { MdAdminPanelSettings as Admin } from "react-icons/md"
+import api, { config } from '../../js/api';
 const Header = () => {
   const [showSide, setShowSide] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
@@ -23,9 +24,49 @@ const Header = () => {
   const setttingShowTrue = () => {
     setShowSide(true)
   }
+  const fetchDefault = async () => {
+    try {
+      const response = await api.get(`/videoDetails/?page_size=15&ordering=-date_uploaded`, config);
+      const data = await response.data;
+      sessionStorage.setItem("store", JSON.stringify(data.results))
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+  const  fetchmovies = async () => {
+    try {
+      const response = await api.get(`/videoDetails/?typs=movies&page_size=15&ordering=-date_uploaded`, config);
+      const data = await response.data;
+      sessionStorage.setItem("movies", JSON.stringify(data.results))
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+  const fetchseries = async () => {
+    try {
+      const response = await api.get(`/videoDetails/?typs=series&page_size=15&ordering=-date_uploaded`, config);
+      const data = await response.data;
+      sessionStorage.setItem("series", JSON.stringify(data.results))
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+  const fetchanime = async () => {
+    try {
+      const response = await api.get(`/videoDetails/?typs=anime&page_size=15&ordering=-date_uploaded`, config);
+      const data = await response.data;
+      sessionStorage.setItem("anime", JSON.stringify(data.results))
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
   useEffect(() => {
     const superuser = localStorage.getItem("admin")
-    superuser == "true" ? setAdmin(true) : setAdmin(false)
+    superuser == "true" ? setAdmin(true) : setAdmin(false)   
+    fetchDefault()
+    fetchseries()
+    fetchmovies()
+    fetchanime()
   }, [])
   return (
     <div className='p-3 bg-gray-900 bg-opacity-80 gap-4 sticky top-0 header z-20 backdrop-blur-sm md:hidden'>

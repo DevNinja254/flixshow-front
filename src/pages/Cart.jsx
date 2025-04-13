@@ -2,13 +2,17 @@ import React, { useEffect, useState } from 'react'
 import Layout from '../layout/Layout'
 import { useNavigate } from 'react-router-dom'
 import api, { config } from '../js/api'
+import { BarLoader as Spinner } from 'react-spinners'
 const Cart = () => {
     const carr = [1,1,1,1]
+    const [purchse, setPurchse] = useState(false)
+    const [error, setError] = useState(false)
     const [total, setTotal] = useState(0)
     const [authenticated, setAuthenticated] = useState(false)
     const [cart, setCart] = useState([])
     const navigate = useNavigate()
     const [userData, setUserData] = useState()
+    const [paidvideos, setPaidVideos] = useState(null)
      // console.log(cart)
      const getTotal = (objs) => {
         let ttl = 0
@@ -35,33 +39,68 @@ const Cart = () => {
         }
     }
     const purchase = () => {
+        setPurchse(true)
         if (authenticated) {
-            if (window.confirm(`Purchase ${cart.length} at cost of Ksh ${total}. Your account balance is Ksh.${userData.profile.account}`)) {
+            if (window.confirm(`Purchase ${cart.length} videos at cost of Ksh ${total}. Your account balance is Ksh.${userData.profile.account}`)) {
                 // console.log(userData.profile)
                 if (userData.profile.account >= total) {
+                    
+                    
                     for (const carty of cart) {
+                        const paid = localStorage.getItem("paidVideo")
+                        const paidTitles = localStorage.getItem("paid")
                         api.post("/purchased/", {
                             username: userData.username,
                             video_name: carty.video_name,
                             image_url:carty.image_url,
-                            price: carty.price
+                            price: carty.price,
+                            video_id:carty.video_id,
                         }, config)
                         .then(res => {
-                            // console.log(res.data)
+                            if(paidTitles) {
+                                localStorage.setItem("paid", JSON.stringify([...JSON.parse(paidTitles), ...[carty.video_name]]))
+                            }else {
+                                localStorage.setItem("paid", JSON.stringify([carty.video_name]))
+                            }
+                            if(paid) {
+                                localStorage.setItem("paidVideo", JSON.stringify([...JSON.parse(paid), ...[{
+                                    video_name: carty.video_name,
+                                    image_url: carty.image_url,
+                                    price: carty.price,
+                                    video_id: carty.video_id,
+                                }]]))
+                            }else {
+                                localStorage.setItem("paidVideo", JSON.stringify([{
+                                    video_name: carty.video_name,
+                                    image_url: carty.image_url,
+                                    price: carty.price,
+                                    video_id: carty.video_id,
+                                }]))
+                            }
+                            
+                            // console.log(cart.length)
+                            if (cart.indexOf(carty) === cart.length - 1) {
+                                navigate("/purchased/")
+                                setPurchse(false)
+                            }
                             // remove(res.data.video_name)
                         })
                     }
+                    // localStorage.setItem("paidVideo", JSON.stringify(paidvideos))
                     localStorage.removeItem("cart")
-                    api.patch(`/profile/${userData.profile.buyerid}/`, {account: userData.profile.account - total}, config)
+                    api.patch(`/profile/${userData.profile.buyerid}/`, {account: userData.profile.account + total}, config)
                     .then(res => {
+                        
                         // console.log(res.data)
                     })
-                    navigate("/purchased/")
+                    
                 } else {
                     navigate("/account/deposit/")
                 }
             }
+           
         } else {
+            setPurchse(false)
             navigate("/account/authenticate/")
         }
     }   
@@ -70,6 +109,12 @@ const Cart = () => {
         document.title = "Your Cart"
         settingCart()
         const token = localStorage.getItem("access_token")
+        const paid = localStorage.getItem("paidVideo")
+        if (paid) {
+            setPaidVideos(JSON.parse(paid))
+        } 
+        const paidTitles = JSON.stringify(localStorage.getItem("paid"))
+        console.log(paidTitles)
         if(token) {
             const config = {
                 headers : {
@@ -93,6 +138,20 @@ const Cart = () => {
        
   return (
     <Layout>
+        <div className='fixed top-0 left-0 w-full z-30'>
+              <Spinner
+                color="rgba(255,255,255,0.5)"
+                // backgroundColor="black"
+                loading={purchse}
+                cssOverride={{
+                  "width": "100%",
+                  "backgroundColor": "transparent"
+                }}
+                size={150}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
+            </div>
       <main className='cart text-white'>
         <h2 className=' text-center py-3 font-bold font-mono'>Your Cart ({cart.length} items)</h2>
         <div className='p-3 lg:w-10/12 m-auto'>
@@ -119,7 +178,7 @@ const Cart = () => {
                         <p>Estimated Total: </p>
                         <p>Ksh.{total}</p>
                     </span>
-                    <button className='bg-green-700 my-2 p-2 rounded-md text-sm font-bold hover:opacity-80' onClick={purchase}>Purchase</button>
+                    <button disabled={purchse} className={`bg-green-700 my-2 p-2 rounded-md text-sm font-bold hover:opacity-80 ${purchse ? "opacity-80": "opacity-100"}`} onClick={purchase}>{purchse ? "Purchasing" : "Purchase"}</button>
                 </div>
         </div>
         
