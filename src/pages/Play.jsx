@@ -76,12 +76,14 @@ const App = () => {
           const vide = sessionStorage.getItem("video")
           if (videoDetail) {
             // console.log(JSON.parse(videoDetail))
-            setVideo(JSON.parse(vide))
-            setVideoDetails(JSON.parse(videoDetail))
-            setIsLoading(false)
-            setSwitching(false)
-            JSON.parse(vide)[0] ?  setVideos(true) : setVideos(false)  
-            setVideoUrl(JSON.parse(vide)[0].video)
+            if(vide) {
+              setVideo(JSON.parse(vide))
+              setVideoDetails(JSON.parse(videoDetail))
+              setIsLoading(false)
+              setSwitching(false)
+              JSON.parse(vide)[0] ?  setVideos(true) : setVideos(false)  
+              setVideoUrl(JSON.parse(vide)[0].video)
+            }
             // sessionStorage.removeItem("videodetail")
             // sessionStorage.removeItem("video")
           } else {

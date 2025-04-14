@@ -168,7 +168,7 @@ const Mp4 = () => {
                                 })
                                 setPurchasing(false)
                                 sessionStorage.setItem("videodetail", JSON.stringify(datas))
-                                navigate(`/store/play/${res.data.video_name}?q=${res.data.video_id}`)
+                                navigate(`/store/play/${datas.title}?q=${datas.vidId}`)
                             })
                             } catch(error) {
                                 console.log(error)
