@@ -18,7 +18,7 @@ const Login = ({settingLoading, isLoading}) => {
             // console.log(data)
             localStorage.setItem("Authenticated", true)
             localStorage.setItem("refresh_token", data.tokens.refresh)
-            localStorage.setItem("admin",data.is_superuser )
+            localStorage.setItem("admin",data.is_staff )
             localStorage.setItem("access_token", data.tokens.access)
             settingLoading(false)
             navigate("/")
