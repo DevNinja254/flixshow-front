@@ -15,7 +15,7 @@ const Login = ({settingLoading, isLoading}) => {
         try {
             const res = await api.post("/login/", formData, config)
             const data = res.data
-            // console.log(data)
+            console.log(data)
             localStorage.setItem("Authenticated", true)
             localStorage.setItem("refresh_token", data.tokens.refresh)
             localStorage.setItem("admin",data.is_staff )
