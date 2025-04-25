@@ -88,7 +88,7 @@ const Cart = () => {
                     }
                     // localStorage.setItem("paidVideo", JSON.stringify(paidvideos))
                     localStorage.removeItem("cart")
-                    api.patch(`/profile/${userData.profile.buyerid}/`, {account: userData.profile.account + total}, config)
+                    api.patch(`/profile/${userData.profile.buyerid}/`, {account: userData.profile.account - total}, config)
                     .then(res => {
                         
                         // console.log(res.data)
