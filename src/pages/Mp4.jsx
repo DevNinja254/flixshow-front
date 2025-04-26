@@ -168,7 +168,9 @@ const Mp4 = () => {
                                 })
                                 setPurchasing(false)
                                 sessionStorage.setItem("videodetail", JSON.stringify(datas))
-                                navigate(`/store/play/${datas.title}?q=${datas.vidId}`)
+                                setTimeout(() => {
+                                    navigate(`/store/play/${datas.title}?q=${datas.vidId}`)
+                                }, 1000)
                             })
                             } catch(error) {
                                 console.log(error)
