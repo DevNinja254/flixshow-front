@@ -11,7 +11,8 @@ import api from "../js/api";
 import Loader from "../boilerplates/Loader";
 import { config as configurer } from "../js/api";
 import { BarLoader as Spinner } from "react-spinners";
-
+// import { FaDownload as Download } from "react-icons/fa";
+import { FaDisplay as Ply} from "react-icons/fa6";
 const App = () => {
   const [spinner, setSpinner] = useState(false)
   const commentRef = useRef(null)
@@ -27,6 +28,7 @@ const App = () => {
   const[changer, setChanger] = useState("")
   const [liked, setLiked] = useState(false)
   const [switching, setSwitching] = useState(false)
+  const [source, setSource] = useState("")
   const [formData, setFormData] = useState({
     rate: 0,
     comment: ""
@@ -58,7 +60,7 @@ const App = () => {
       rate: 0,
       comment: ""
     })
-    console.log("tkae")
+    // console.log("tkae")
     if (authenticated) {
       // const likedVideos = localStorage.getItem('likes')
       const titles = localStorage.getItem("paid").split(",")
@@ -78,6 +80,7 @@ const App = () => {
             // console.log(JSON.parse(videoDetail))
             if(vide) {
               setVideo(JSON.parse(vide))
+              setSource(JSON.parse(vide)[0].video)
               setVideoDetails(JSON.parse(videoDetail))
               setIsLoading(false)
               setSwitching(false)
@@ -103,6 +106,7 @@ const App = () => {
                     // console.log(res1.data)
                    res1.data.results.length > 0 ?  setVideos(true) : setVideos(false)  
                    setVideoUrl(res1.data.results[0].video)
+                   setSource(res1.data.results[0].video)
                    sessionStorage.setItem("video", JSON.stringify(res1.data.results)) 
                 })
                 }catch(error) {
@@ -195,6 +199,16 @@ const App = () => {
         }, {once: true})
       
   }}
+  const changeSource = (src) => {
+    window.scrollTo(0, 0)
+    if (playVideo.current) {
+        playVideo.current.src = src
+        playVideo.current.play()
+    }
+    // console.log(src)
+    setSource(src)
+    
+}
   const changevid = async(title, id) => {
     window.scrollTo(0,0)
     setSpinner(true)
@@ -212,6 +226,7 @@ const App = () => {
                     // console.log(res1.data)
                    res1.data.results.length > 0 ?  setVideos(true) : setVideos(false)  
                    setVideoUrl(res1.data.results[0].video)
+                   setSource(res1.data.results[0].video)
                    setSpinner(false)
                 })
                 }catch(error) {
@@ -332,9 +347,7 @@ const App = () => {
               <div className="md:grid grid-cols-3 gap-3 md:my-3 lg:block">
                 {
                   video.map((vid, index) => (
-                    <div  onClick={() => {
-                      downloader(vid)
-                    }}  target="_blank" className="bg-white block bg-opacity-10 rounded-md my-2 md:m-0 lg:my-2 p-3"  download key={index}>
+                    <div  className="bg-white block bg-opacity-10 rounded-md my-2 md:m-0 lg:my-2 p-3" key={index}>
                   <div className="flex flex-wrap items-center justify-between">
                       <div className="grid w-full overflow-hidden">
                          
@@ -344,9 +357,17 @@ const App = () => {
                           <p>{videolength}</p>
                         </div>
                       </div>
-                      <div className="flex items-center text-green-700">
-                        <Download/>
-                        <p>Download</p>
+                      <div className="flex items-center gap-2 my-2">
+                        <div>
+                          <a href={vid.video} className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit' download={vid.video.split("/")[5]} target="_blank">
+                                    <Download size={15} /> Download
+                          </a>
+                        </div>
+                        <button className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit' onClick={() => {
+                                changeSource(vid.video)
+                            }}>
+                                    <Ply size={13} /> {source == vid.video ? "playing..." : "Play"}
+                                </button>
                       </div>
                   </div>
                   <p className="flex uppercase gap-3 textSm text-gray-300 py-1 font-mono tracking-wide">Kingstonemovies.xyz</p>
