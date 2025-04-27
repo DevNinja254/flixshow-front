@@ -11,9 +11,13 @@ import api from "../js/api";
 import Loader from "../boilerplates/Loader";
 import { config as configurer } from "../js/api";
 import { BarLoader as Spinner } from "react-spinners";
+import useDownloader from 'react-use-downloader';
 // import { FaDownload as Download } from "react-icons/fa";
 import { FaDisplay as Ply} from "react-icons/fa6";
 const App = () => {
+  const { size, elapsed, percentage, download, cancel, error, isInProgress } =
+  useDownloader();
+  console.log(error, percentage,size)
   const [spinner, setSpinner] = useState(false)
   const commentRef = useRef(null)
   const playVideo = useRef(null)
@@ -47,7 +51,7 @@ const App = () => {
   const [username, setUsername] = useState("")
   const [videos, setVideos] = useState(false)
   const [videoUrl, setVideoUrl] = useState(null)
-  const [error, setError] = useState(false)
+  const [errors, setError] = useState(false)
   // console.log(videoTitle)
   useEffect(() => {
     setSwitching(true)
@@ -359,9 +363,9 @@ const App = () => {
                       </div>
                       <div className="flex items-center gap-2 my-2">
                         <div>
-                          <a href={vid.video} className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit' download={vid.video.split("/")[5]} target="_blank">
+                          <button onClick={() => download(vid.video, vid.video.split("/")[5])}  className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit' >
                                     <Download size={15} /> Download
-                          </a>
+                          </button>
                         </div>
                         <button className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit' onClick={() => {
                                 changeSource(vid.video)

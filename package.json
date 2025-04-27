@@ -23,6 +23,7 @@
     "react-slideshow-image": "^4.3.2",
     "react-spinners": "^0.15.0",
     "react-type-animation": "^3.2.0",
+    "react-use-downloader": "^1.2.10",
     "vite-plugin-require": "^1.2.14"
   },
   "devDependencies": {
