@@ -17,7 +17,9 @@ import { FaDisplay as Ply} from "react-icons/fa6";
 const App = () => {
   const { size, elapsed, percentage, download, cancel, error, isInProgress } =
   useDownloader();
-  console.log(error, percentage,size)
+  const [downloading, setDownloading] = useState(false)
+  const [downloadingUrl, setDownloadingUrl] = useState([])
+  // console.log(error, percentage,size)
   const [spinner, setSpinner] = useState(false)
   const commentRef = useRef(null)
   const playVideo = useRef(null)
@@ -361,11 +363,19 @@ const App = () => {
                           <p>{videolength}</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 my-2">
+                      <div className="flex items-center gap-2 my-2 flex-wrap">
                         <div>
-                          <button onClick={() => download(vid.video, vid.video.split("/")[5])}  className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit' >
+                        {downloading && downloadingUrl.includes(vid.video) ? <button className='textSm font-bold flex gap-1 items-center bg-green-900 text-white rounded-lg p-2 hover:bg-green-800 w-fit' >
+                          <p>Downloading : {percentage}%</p>
+                          <p>{size / (1024 * 1024)}MB</p>
+                          </button> : 
+                          <button onClick={() => 
+                           { 
+                            setDownloading(true)
+                            setDownloadingUrl(downloadingUrl => [...downloadingUrl, vid.video])
+                            download(vid.video, vid.video.split("/")[5])}}  className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit' >
                                     <Download size={15} /> Download
-                          </button>
+                          </button>}
                         </div>
                         <button className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit' onClick={() => {
                                 changeSource(vid.video)
