@@ -365,7 +365,7 @@ const App = () => {
                       </div>
                       <div className="flex items-center gap-2 my-2 flex-wrap">
                         <div>
-                        {downloading && downloadingUrl.includes(vid.video) ? <button className='textSm font-bold flex gap-1 items-center bg-green-900 text-white rounded-lg p-2 hover:bg-green-800 w-fit' >
+                        {/* {downloading && downloadingUrl.includes(vid.video) ? <button className='textSm font-bold flex gap-1 items-center bg-green-900 text-white rounded-lg p-2 hover:bg-green-800 w-fit' >
                           <p>Downloading : {Math.round(((percentage * size) / 100) / (1024 * 1024))}MB</p>
                           <p>/</p>
                           <p>{Math.round(size / (1024 * 1024))}MB</p>
@@ -376,8 +376,11 @@ const App = () => {
                             setDownloadingUrl(downloadingUrl => [...downloadingUrl, vid.video])
                             download(vid.video, vid.video.split("/")[5])}}  className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit' >
                                     <Download size={15} /> Download
-                          </button>}
+                          </button>} */}
                         </div>
+                        <a href={vid.video} target="_blank" className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit'  download>
+                                    <Download size={15} /> Download
+                          </a>
                         <button className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit' onClick={() => {
                                 changeSource(vid.video)
                             }}>
