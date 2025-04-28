@@ -6,82 +6,83 @@ import Loader from '../boilerplates/Loader';
 import { config as configurer } from '../js/api';
 import { BarLoader as Spinner } from 'react-spinners'
 const Purchased = () => {
-    const data = [1,1,1,1,1,1]
+    const [data, setData] = useState([])
     const [spinner, setSpinner] = useState(false)
     const [paidTitles, setPaidTitles] = useState([])
     const navigate = useNavigate()
     const [isLoading1, setIsLoading1] = useState(true)
     const [isLoading2, setIsLoading2] = useState(true)
     const [isLoading3, setIsLoading3] = useState(true)
+    const [isLoading, setIsLoading] = useState(true)
      const [redirecto, setRedirector] = useState(false)
     const [error, setError] = useState(false);
-    const fetchItems = async () => {
-      window.scrollTo(0, 0);
-      const token = true
-      if (token) {
+    const fetchItems = async (username) => {
+            try {
+                // purchased
+                api.get(`/purchased/?username=${username}`, configurer)
+                .then(res => {
+                  const dataPurchased = res.data
+                  // console.log(dataPurchased)
+                  setPaidTitles(paidTitles => [...paidTitles, ...dataPurchased]);
+                  setIsLoading1(false);
+                })
+                // watch movies
+                api.get(`/onwatch/?watcher=${username}`, configurer)
+                .then(res => {
+                  const dataWatched = res.data.results;
+                  setPaidTitles(paidTitles => [...paidTitles, ...dataWatched]);
+                  setIsLoading2(false);
+                })
+                // downloaded movies
+                api.get(`/download/?name=${username}`, configurer)
+                .then(res => {
+                  const dataDownloaded = res.data.results;
+                  setPaidTitles(paidTitles => [...paidTitles, ...dataDownloaded]);
+                  setIsLoading3(false)
+                })
+                          
+            } catch (error) {
+              navigate("/account/authenticate");
+            }
+          }
+      const fetchInfo = async(token)=> {
         const config = {
           headers: {
             "Authorization": `Bearer ${token}`
           }
-        };
-        const authenticated = localStorage.getItem("Authenticated")
-        if (authenticated === "true") {       
-          // if authenticated get purchased items
-          const paidVid = localStorage.getItem("paidVideo")
-          if (paidVid) {
-            console.log("local")
-            const paid = JSON.parse(paidVid)
-            setPaidTitles(paid)
-            setIsLoading1(false)
-            setIsLoading3(false)
-            setIsLoading2(false)
-          } else {
-            try {
-              const profileResponse = await api.get("/info/", config);
-              const dataProfile = profileResponse.data;
-              const purchasedResponse = await api.get(`/purchased/?username=${dataProfile.username}`, configurer);
-              const dataPurchased = purchasedResponse.data.results;
-              setPaidTitles(paidTitles => [...paidTitles, ...dataPurchased]);
-              setIsLoading1(false);
-            } catch (error) {
-              console.error("Error fetching purchased items:", error);
-              setIsLoading1(false); // Ensure loading state is updated even on error
+        }
+        try {
+          api.get("/info/", config)
+          .then(response => {
+            const data = response.data
+            if(data) {
+              fetchItems(data.username)
             }
-      
-            // watch movies
-            try {
-              const watchedResponse = await api.get(`/onwatch/?watcher=${dataProfile.username}`, configurer);
-              const dataWatched = watchedResponse.data.results;
-              setPaidTitles(paidTitles => [...paidTitles, ...dataWatched]);
-              setIsLoading2(false);
-            } catch (error) {
-              console.error("Error fetching watched items:", error);
-              setIsLoading2(false); // Ensure loading state is updated even on error
-            }
-      
-            // downloaded movies
-            try {
-              const downloadedResponse = await api.get(`/download/?name=${dataProfile.username}`, configurer);
-              const dataDownloaded = downloadedResponse.data.results;
-              setPaidTitles(paidTitles => [...paidTitles, ...dataDownloaded]);
-              setIsLoading3(false); // Assuming you want to set this to false on success
-            } catch (error) {
-              console.error("Error fetching downloaded items:", error);
-              setIsLoading3(false); // Ensure loading state is updated even on error
-            }
-          }
-    
-       
-        }else {
-        navigate("/account/authenticate");
+            setData(data)
+            // console.log(data)
+            setIsLoading(false)
+          })
+         
+         
+        } catch(error) {
+          console.log(error)
+          navigate("/account/authenticate");
+        }
       }
-      } else {
-        navigate("/account/authenticate");
-      }}
     useEffect(() => {
         window.scrollTo(0,0)
         document.title = "Purchased"
-        fetchItems()
+        const token = localStorage.getItem("access_token")
+        if (token) {
+          fetchInfo(token)
+        } else {
+          navigate("/account/authenticate");
+        }
+        // if(!isLoading) {
+    
+        //   fetchItems()
+        // }
+       
       },[])
     //   remove duplicate
     function removeDuplicates(arr, key) {
@@ -123,10 +124,39 @@ const Purchased = () => {
             setRedirector(false)
           }
       }
+      const movies = []
+      if(!isLoading1 && !isLoading2 && !isLoading3){
+        
+        const titles = []
+        for (const vid of paidTitles) {
+          if (!titles.includes(vid.video_name)){
+            titles.push(vid.video_name)
+            movies.unshift(vid)
+        }
+        localStorage.setItem('paid', JSON.stringify(titles))
+        localStorage.setItem("paidVideo", JSON.stringify(movies.slice(5)))
+        // console.log(movies)
+      }
+    }
   return (
     <div className={`${redirecto ? "opacity-80" : "opacity-100"} transition-all duration-300`}>
       <Layout>
 
+      <div className='fixed top-0 left-0 w-full z-30'>
+        <Spinner
+          color="rgba(255,255,255,0.5)"
+          // backgroundColor="black"
+          loading={isLoading1 && isLoading2 && isLoading3}
+          cssOverride={{
+            "width": "100%",
+            "backgroundColor": "transparent"
+          }}
+          size={150}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
+      </div>
+      {error ? <p className='bg-red-700 text-white fixed bottom-20 left-3 p-2 text-sm font-bold rounded-sm'>Loading video failed!</p> : null}
       <div className='fixed top-0 left-0 w-full z-30'>
         <Spinner
           color="rgba(255,255,255,0.5)"
@@ -140,13 +170,12 @@ const Purchased = () => {
           aria-label="Loading Spinner"
           data-testid="loader"
         />
-      </div>
-      {error ? <p className='bg-red-700 text-white fixed bottom-20 left-3 p-2 text-sm font-bold rounded-sm'>Loading video failed!</p> : null}
+        </div>
       <main className=' bg-black search'>
             <div className="mx-3 py-2 md:w-11/12 md:mx-auto lg:w-10/12 xl:w-4/5">
-          <p className='text-white text-sm font-mono text-center py-3 capitalize'>{paidTitles.length} paid Movies and Series Available.</p>
+          <p className='text-white text-sm font-mono text-center py-3 capitalize'>{isLoading1 && isLoading2 && isLoading3 ? "loading " : movies.length} paid Movies and Series Available.</p>
             <div className='grid grid-cols-3 gap-5 md:grid-cols-4 lg:grid-cols-5  2xl:grid-cols-6 my-2'>
-                {paidTitles.map((data, index) => (
+                {movies.map((data, index) => (
                     <div key={index} className="hover:shadow-md hover:shadow-sky-400 hover:cursor-pointer my-2 " onClick={() => {
                         redirect(data.video_name, data.video_id)
                     }}>

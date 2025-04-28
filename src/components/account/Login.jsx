@@ -21,7 +21,7 @@ const Login = ({settingLoading, isLoading}) => {
             localStorage.setItem("admin",data.is_staff )
             localStorage.setItem("access_token", data.tokens.access)
             settingLoading(false)
-            navigate("/")
+            navigate("/purchased/")
         }catch(error) {
             settingLoading(false)
             if(error.response.data) {

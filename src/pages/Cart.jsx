@@ -44,55 +44,54 @@ const Cart = () => {
             if (window.confirm(`Purchase ${cart.length} videos at cost of Ksh ${total}. Your account balance is Ksh.${userData.profile.account}`)) {
                 // console.log(userData.profile)
                 if (userData.profile.account >= total) {
-                    
-                    
-                    for (const carty of cart) {
-                        const paid = localStorage.getItem("paidVideo")
-                        const paidTitles = localStorage.getItem("paid")
-                        api.post("/purchased/", {
-                            username: userData.username,
-                            video_name: carty.video_name,
-                            image_url:carty.image_url,
-                            price: carty.price,
-                            video_id:carty.video_id,
-                        }, config)
-                        .then(res => {
-                            if(paidTitles) {
-                                localStorage.setItem("paid", JSON.stringify([...JSON.parse(paidTitles), ...[carty.video_name]]))
-                            }else {
-                                localStorage.setItem("paid", JSON.stringify([carty.video_name]))
-                            }
-                            if(paid) {
-                                localStorage.setItem("paidVideo", JSON.stringify([...JSON.parse(paid), ...[{
-                                    video_name: carty.video_name,
-                                    image_url: carty.image_url,
-                                    price: carty.price,
-                                    video_id: carty.video_id,
-                                }]]))
-                            }else {
-                                localStorage.setItem("paidVideo", JSON.stringify([{
-                                    video_name: carty.video_name,
-                                    image_url: carty.image_url,
-                                    price: carty.price,
-                                    video_id: carty.video_id,
-                                }]))
-                            }
-                            
-                            // console.log(cart.length)
-                            if (cart.indexOf(carty) === cart.length - 1) {
-                                navigate("/purchased/")
-                                setPurchse(false)
-                            }
-                            // remove(res.data.video_name)
-                        })
-                    }
-                    // localStorage.setItem("paidVideo", JSON.stringify(paidvideos))
                     localStorage.removeItem("cart")
                     api.patch(`/profile/${userData.profile.buyerid}/`, {account: userData.profile.account - total}, config)
                     .then(res => {
                         
-                        // console.log(res.data)
+                        for (const carty of cart) {
+                            const paid = localStorage.getItem("paidVideo")
+                            const paidTitle = localStorage.getItem("paid")
+                            api.post("/purchased/", {
+                                username: userData.username,
+                                video_name: carty.video_name,
+                                image_url:carty.image_url,
+                                price: carty.price,
+                                video_id:carty.video_id,
+                            }, config)
+                            .then(res => {
+                                if(paidTitle) {
+                                    localStorage.setItem("paid", JSON.stringify([...JSON.parse(paidTitle), ...[carty.video_name]]))
+                                }else {
+                                    localStorage.setItem("paid", JSON.stringify([carty.video_name]))
+                                }
+                                if(paid) {
+                                    localStorage.setItem("paidVideo", JSON.stringify([...JSON.parse(paid), ...[{
+                                        video_name: carty.video_name,
+                                        image_url: carty.image_url,
+                                        price: carty.price,
+                                        video_id: carty.video_id,
+                                    }]]))
+                                }else {
+                                    localStorage.setItem("paidVideo", JSON.stringify([{
+                                        video_name: carty.video_name,
+                                        image_url: carty.image_url,
+                                        price: carty.price,
+                                        video_id: carty.video_id,
+                                    }]))
+                                }
+                                
+                                // console.log(cart.length)
+                                if (cart.indexOf(carty) === cart.length - 1) {
+                                    navigate("/purchased/")
+                                    setPurchse(false)
+                                }
+                                // remove(res.data.video_name)
+                            })
+                        }
                     })
+                   
+                    // localStorage.setItem("paidVideo", JSON.stringify(paidvideos))
+                   
                     
                 } else {
                     navigate("/account/deposit/")
@@ -114,7 +113,6 @@ const Cart = () => {
             setPaidVideos(JSON.parse(paid))
         } 
         const paidTitles = JSON.stringify(localStorage.getItem("paid"))
-        console.log(paidTitles)
         if(token) {
             const config = {
                 headers : {

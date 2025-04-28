@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from 'react'
+import api, { config } from '../../js/api'
+import Loader from '../../boilerplates/Loader'
 
-const PurchaseHistory = () => {
+const PurchaseHistory = ({userData}) => {
     const [datas, setData] = useState([])
+    const [loading, setLoading] = useState(true)
     useEffect(() => {
-      const data = localStorage.getItem("paidVideo")
-      if (data) {
-        setData(JSON.parse(data))
-      }
+      api.get(`/purchased/?username=${userData.username}`, config)
+      .then(res => {
+        const data = res.data
+        const dat2 = []
+        for (const dat of data) {
+          dat2.unshift(dat)
+        }
+        setData(dat2)
+        setLoading(false)
+      })
     }, [])
     // console.log(data)
     function convertTimestampToDateTime(timestampString) {
@@ -23,7 +32,13 @@ const PurchaseHistory = () => {
     return (
       <div className='text-white m-3 border-2 border-gray-300 border-opacity-20 rounded-md '>
           <h1 className='text-center py-2 font-mono'>Purchase History</h1>
-          {datas.map((data, index) => (
+          <div style={{
+            maxHeight: "50vh",
+            "overflowY" : "scroll"
+          }}>
+            {loading ? <div>
+              <Loader h1='h-32'/>
+            </div> :datas.map((data, index) => (
               index % 2 == 0 ? <div className='grid overflow-hidden grid-cols-3 justify-between p-2 bg-slate-500 bg-opacity-40 text-sm font-mono'>
                 <p>{data.video_name}</p>
               <p>Ksh, {data.price ? data.price : data.cost}</p>
@@ -35,9 +50,7 @@ const PurchaseHistory = () => {
              <p>{data.purchase_time ?data.purchase_time  : convertTimestampToDateTime(data.time)}</p>
            </div>
           ))}
-        
-       
-      
+          </div>
       </div>
     )
 }

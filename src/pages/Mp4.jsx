@@ -122,7 +122,7 @@ const Mp4 = () => {
                 if (userData.profile.account >= datas.price) {
                     const data = {
                         username: userData.username,
-                        video_name: datas.title,
+                        video_name: datas.title, 
                         image_url:datas.image,
                         price: datas.price,
                         video_id:datas.vidId,
