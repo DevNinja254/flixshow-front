@@ -50,16 +50,19 @@ const Mp4 = () => {
                     "Authorization" : `Bearer ${token}`
                 }
                 }
-                try {
                 api.get("/info/", config)
                 .then(res => {
                     const dataProfile = res.data
                     setUserData(dataProfile)
                     setAuthenticated(true)
-                })} catch(error) {
+                    sessionStorage.setItem("Authenticated", true)
+                    sessionStorage.setItem('proID', dataProfile.profile.buyerid)
+                })
+                .catch(error => {
+                    localStorage.setItem("Authenticated", false)
                     setAuthenticated(false)
                     console.log(error)
-                }
+                })
         }
         const videoDetail = sessionStorage.getItem("videodetail")
         if (videoDetail) {

@@ -119,17 +119,20 @@ const Cart = () => {
                     "Authorization" : `Bearer ${token}`
                 }
                 }
-                try {
                 api.get("/info/", config)
                 .then(res => {
                     const dataProfile = res.data
                     setUserData(dataProfile)
                     setAuthenticated(true)
+                    sessionStorage.setItem("Authenticated", true)
+                    sessionStorage.setItem('proID', dataProfile.profile.buyerid)
                 //    console.log(res.data)
-                })} catch(error) {
+                }) 
+                .catch(error => {
+                    sessionStorage.setItem("Authenticated", false)
                     setAuthenticated(false)
                     console.log(error)
-                }
+                })
         }
     }, [])
    

@@ -30,29 +30,26 @@ const Account = () => {
             // console.log(dataProfile)
             document.title = `${dataProfile.username} | Account`
             setLoading(false)
+            sessionStorage.setItem("Authenticated", true)
+            sessionStorage.setItem('proID', dataProfile.profile.buyerid)
         } catch {
+            localStorage.setItem("Authenticated", false)
             navigate('/account/authenticate')
         }
     }
     useEffect(() => {
         window.scrollTo(0,0)
         setUpdate(false)
-        const authentic = localStorage.getItem("Authenticated")
-        if (authentic == "true") {
-            setAuthenticated(true)
-            const token = localStorage.getItem("access_token")
-            // if authenticated
-            if(token) {
+        const token = localStorage.getItem("access_token")
+        // if authenticated
+        if(token) {
             const config = {
                 headers : {
                 "Authorization" : `Bearer ${token}`
                 }
             }
-               authenticator(config)                    
-            } else {
-                navigate('/account/authenticate')
-            }
-        }else {
+            authenticator(config)                    
+        } else {
             navigate('/account/authenticate')
         }
     }, [updating])

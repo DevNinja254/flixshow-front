@@ -6,7 +6,6 @@ import { BarLoader as Spinner } from 'react-spinners'
 import api from "../js/api"
 import { config } from '../js/api'
 const Deposit = () => {
-  const [username, setUsername] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [proid, setProid] = useState("")
   const [submitted, setSubmitted] = useState(false)
@@ -51,16 +50,10 @@ const Deposit = () => {
    
     window.scrollTo(0,0)
     document.title = "Deposit"
-    const authenticated = localStorage.getItem("Authenticated")
-    const user = localStorage.getItem("username")
-    const proID = localStorage.getItem("proID")
-    // console.log(proID)
+    const authenticated = sessionStorage.getItem("Authenticated")
+    const pro_ID = sessionStorage.getItem("proID")
     if(authenticated == "true") {
-      setUsername(user)
-      if (!user) {
-        window.alert("For efficient processing, set Your username before depositing.")
-      }
-      setProid(proID)
+      setProid(pro_ID)
     } else {
       navigate("/account/authenticate/") 
     }
