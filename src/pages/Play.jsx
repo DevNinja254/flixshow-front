@@ -364,7 +364,7 @@ const App = () => {
                                     <Download size={15} /> Download
                           </button>}
                         </div> */}
-                        <a target="_blank" href={`https://kingstonemovies.org/api/v1/download_video/${vid.videoId}`} className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit'  download>
+                        <a href={`https://kingstonemovies.org/api/v1/download_video/${vid.videoId}`} className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit'  download>
                                     <Download size={15} /> Download
                           </a>
                         <button className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit' onClick={() => {
