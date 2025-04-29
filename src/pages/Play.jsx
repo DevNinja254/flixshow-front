@@ -183,34 +183,7 @@ const App = () => {
     })
   }
   const handleDownload = (videoId) => {
-    // console.log(video)
-    setSpinner(true)
-    api.get(`/download_video/${videoId}`, {
-      responseType: 'blob',
-    })
-    .then(response => {
-       // Create a URL for the blob
-       const url = window.URL.createObjectURL(new Blob([response.data]));
-
-       // Create a temporary link element
-       const link = document.createElement('a');
-       link.href = url;
-       link.setAttribute('download', response.headers['content-disposition']?.split('filename=')[1]?.replace(/"/g, '') || `video_${videoId}.mp4`); // Extract filename or use a default
-       document.body.appendChild(link);
-
-       // Programmatically click the link to trigger the download
-       link.click();
-
-       // Clean up the URL object
-       window.URL.revokeObjectURL(url);
-       document.body.removeChild(link);
-      setSpinner(false)
-    })
-    .catch((error) => {
-      console.error('Error downloading video:', error);
-      setSpinner(false)
-      // Handle error
-    });
+    
    }
   const changeSource = (src) => {
     window.scrollTo(0, 0)
@@ -391,7 +364,7 @@ const App = () => {
                                     <Download size={15} /> Download
                           </button>}
                         </div> */}
-                        <a href={`https://kingstonemovies.org/api/v1/download_video/${vid.videoId}`} className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit'  download>
+                        <a target="_blank" href={`https://kingstonemovies.org/api/v1/download_video/${vid.videoId}`} className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit'  download>
                                     <Download size={15} /> Download
                           </a>
                         <button className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit' onClick={() => {
