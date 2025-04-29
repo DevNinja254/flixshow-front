@@ -51,7 +51,7 @@ const Purchased = () => {
             "Authorization": `Bearer ${token}`
           }
         }
-        try {
+        
           api.get("/info/", config)
           .then(response => {
             const data = response.data
@@ -61,13 +61,11 @@ const Purchased = () => {
             setData(data)
             // console.log(data)
             setIsLoading(false)
-          })
-         
-         
-        } catch(error) {
+          })         
+        .catch(error =>  {
           console.log(error)
           navigate("/account/authenticate");
-        }
+        })
       }
     useEffect(() => {
         window.scrollTo(0,0)
@@ -101,8 +99,7 @@ const Purchased = () => {
           setSpinner(true)
           setRedirector(true)
           
-          try {
-            api.get(`/videoDetails/${id}/`,config )
+          api.get(`/videoDetails/${id}/`,config )
             .then (res => {
               sessionStorage.setItem("videodetail", JSON.stringify(res.data))
               api.get(`/videos/?name=${title.split(" ").join("%20")}`, config)
@@ -112,17 +109,19 @@ const Purchased = () => {
                 console.log(data1,"VideoColorSpace")
                 navigate(`/store/play/${title}?q=${id}`)
               })
+              .catch (e => {
+                setError(true)
+                setSpinner(false)
+                setRedirector(false)
+                console.log(e.message)
+              })
             } )
-            
-            
-            
-          } catch (e) {
+            .catch (e => {
             setError(true)
-            console.log(e.message)
-          } finally {
             setSpinner(false)
             setRedirector(false)
-          }
+            console.log(e.message)
+          })
       }
       const movies = []
       if(!isLoading1 && !isLoading2 && !isLoading3){
