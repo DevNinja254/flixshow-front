@@ -105,7 +105,7 @@ const Deposit = () => {
             <label  className="block text-sm my-2" htmlFor="number">Phone Number</label>
             <input type="number"  className="outline-none bg-gray-600 block w-full py-2 px-1 rounded-sm bg-opacity-15 text-gray-600" name='phone_number' required={true} value={formData.phone_number} onChange={handleChange}/>
             <div>
-            <button  className={` bg-sky-600  w-full p-2 rounded-sm text-white font-bold hover:opacity-85 block mt-2`} type='submit' disabled={submitting} onSubmit={handleSubmit}>Deposit</button>
+            <button  className={` bg-sky-600  w-full p-2 rounded-sm text-white font-bold hover:opacity-85 block mt-2`} type='submit' disabled={submitting} onSubmit={handleSubmit}>{!submitting ? "Deposit":submitted ? "STK sent." : "Sending STK..."}</button>
             </div>
         </form>
       </main>
