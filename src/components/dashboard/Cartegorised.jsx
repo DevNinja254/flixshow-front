@@ -39,7 +39,7 @@ const Cartegorised = ({paidTitles}) => {
         // console.log(paidTitles)
         const paidTitles = JSON.parse(localStorage.getItem("paid"))
         // console.log("clicked")
-        if(paidTitles.includes(title)) {
+        if(paidTitles && paidTitles.includes(title)) {
           // setSpinner(true)
           // setRedirector(true)
           
