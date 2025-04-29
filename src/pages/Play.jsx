@@ -182,29 +182,30 @@ const App = () => {
       [e.target.name]: e.target.value,
     })
   }
-  const downloader = (video) => {
+  const handleDownload = (videoId) => {
     // console.log(video)
-    if(window.confirm(`Download ${String(video.video).split("/")[5]}`)) {
+    setSpinner(true)
+    api.get(`/download_video/${videoId}`, {
+      responseType: 'blob',
+    })
+    .then(response => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
-      // console.log(video.video )
-      link.href = video.video
-    
-      link.setAttribute("target", "_blank")
-      link.download = String(video.video).split("/")[5];
+      link.href = url;
+      link.setAttribute('download', `${videoDetails.title}.mp4`);
+      // link.setAttribute('target', `_blank`);
       document.body.appendChild(link);
       link.click();
+      window.URL.revokeObjectURL(url);
       document.body.removeChild(link);
-    }
-      if(playVideo.current) {
-        const videoUr = playVideo.current.src;
-        setVideoUrl(video.video)
-        playVideo.current.addEventListener('loadeddata', () => {
-          if (playVideo.current) {
-            playVideo.current.play()
-          }
-        }, {once: true})
-      
-  }}
+      setSpinner(false)
+    })
+    .catch((error) => {
+      console.error('Error downloading video:', error);
+      setSpinner(false)
+      // Handle error
+    });
+   }
   const changeSource = (src) => {
     window.scrollTo(0, 0)
     if (playVideo.current) {
@@ -384,9 +385,11 @@ const App = () => {
                                     <Download size={15} /> Download
                           </button>}
                         </div> */}
-                        <a href={vid.video} target="_blank" className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit'  download>
+                        <button onClick={() => {
+                          handleDownload(vid.videoId)
+                        }} className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit'  download>
                                     <Download size={15} /> Download
-                          </a>
+                          </button>
                         <button className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit' onClick={() => {
                                 changeSource(vid.video)
                             }}>
