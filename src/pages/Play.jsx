@@ -52,6 +52,7 @@ const App = () => {
   const [movies, setMovies] = useState(false)
   const [username, setUsername] = useState("")
   const [videos, setVideos] = useState(false)
+  const [videoId, setVideoId] = useState('')
   const [videoUrl, setVideoUrl] = useState(null)
   const [errors, setError] = useState(false)
   // console.log(videoTitle)
@@ -92,6 +93,7 @@ const App = () => {
               setSwitching(false)
               JSON.parse(vide)[0] ?  setVideos(true) : setVideos(false)  
               setVideoUrl(JSON.parse(vide)[0].video)
+              setVideoId(JSON.parse(vide)[0].videoId)
             }
             // sessionStorage.removeItem("videodetail")
             // sessionStorage.removeItem("video")
@@ -182,8 +184,16 @@ const App = () => {
       [e.target.name]: e.target.value,
     })
   }
-  const handleDownload = (videoId) => {
-    
+  const downloader = () => {
+    if(playVideo.current) {
+      console.log(playVideo.current)
+      const link = document.createElement('a');
+      link.href = `https://kingstonemovies.org/api/v1/download_video/${videoId}`;
+      link.download = `${videoDetails.title}.mp4`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
    }
   const changeSource = (src) => {
     window.scrollTo(0, 0)
@@ -292,7 +302,9 @@ const App = () => {
           <div className="lg:grid grid-cols-5 gap-4 lg:m-3 xl:grid-cols-6 2xl:grid-cols-7">
             <div className="video-container col-span-5 ">
               {
-                videos ? <video id="myVideo" ref={playVideo} poster={require(videoDetails.image)} src={require(videoUrl)}  controls controlsList="nodownload nopictureinpicture" autoPlay muted>
+                videos ? <video id="myVideo" ref={playVideo} poster={require(videoDetails.image)} src={require(videoUrl)}  controls autoPlay muted>
+
+
             </video> : <p className="text-white">No Videos by that name</p>
               }
             <div className="flex items-start justify-between text-white">
@@ -307,8 +319,11 @@ const App = () => {
                 </div>
               </div>
               {/* like and comment */}
-              <div className="flex items-start gap-3 mr-2">
+              <div className="flex items-start gap-3 m-2">
                 {/* like */}
+                {/* <div className="border-2 p-1 rounded-md hover::cursor" onClick={downloader}>
+                <Download size={12} />
+                </div> */}
                 <div onClick={handleLike}>
                   {!liked ? <Like size={20}/> :
                   <Like size={20} className="text-green-600"/>}
@@ -342,8 +357,15 @@ const App = () => {
                           <p>{vid.size}</p>
                           <p>{videolength}</p>
                         </div>
+                        <p className="textMidSm max-w-full capitalize whitespace-normal pb-1 font-bold">Download by clicking 3 dots in video</p>
+                        <p className="textMidSm max-w-full capitalize whitespace-normal pb-1 font-bold">NB: only available after video has loaded.</p>
                       </div>
                       <div className="flex items-center gap-2 my-2 flex-wrap">
+                      {/* <button className='textSm font-bold flex gap-1 items-center bg-green-900 text-white rounded-lg p-2 hover:bg-green-800 w-fit' onClick={downloader}>
+                          <p>Downloading : {Math.round(((percentage * size) / 100) / (1024 * 1024))}MB</p>
+                          <p>/</p>
+                          <p>{Math.round(size / (1024 * 1024))}MB</p>
+                          </button>  */}
                         {/* <div>
                         {downloading && downloadingUrl.includes(vid.video) ? <button className='textSm font-bold flex gap-1 items-center bg-green-900 text-white rounded-lg p-2 hover:bg-green-800 w-fit' >
                           <p>Downloading : {Math.round(((percentage * size) / 100) / (1024 * 1024))}MB</p>
@@ -364,9 +386,9 @@ const App = () => {
                                     <Download size={15} /> Download
                           </button>}
                         </div> */}
-                        <a href={`https://kingstonemovies.org/api/v1/download_video/${vid.videoId}`} className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit'  download>
+                        {/* <a href={videoUrl} className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit' target="_blank" download={`${videoDetails.title}.mp4`}>
                                     <Download size={15} /> Download
-                          </a>
+                          </a> */}
                         <button className='textSm font-bold flex gap-1 items-center bg-slate-900 text-white rounded-lg p-2 hover:bg-slate-800 w-fit' onClick={() => {
                                 changeSource(vid.video)
                             }}>
